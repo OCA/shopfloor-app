@@ -6,8 +6,7 @@
             <field name="model_id" ref="shopfloor_base.model_shopfloor_app" />
             <field name="binding_model_id" ref="shopfloor_base.model_shopfloor_app" />
             <field name="state">code</field>
-            <field name="code">
-records.filtered(lambda x: not x.registry_sync).write({"registry_sync": True})
+            <field name="code">records.write({"registry_sync": True})
             </field>
         </record>
 </odoo>
