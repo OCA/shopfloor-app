@@ -51,7 +51,8 @@ class ShopfloorApp(models.Model):
     registered_routes = fields.Text(
         compute="_compute_registered_routes",
         compute_sudo=True,
-        help="Technical field to allow developers to check registered routes on the form",
+        help="Technical field to allow developers "
+        "to check registered routes on the form",
         groups="base.group_no_one",
     )
     profile_ids = fields.Many2many(
@@ -96,9 +97,8 @@ class ShopfloorApp(models.Model):
             routes = sorted(rec._registered_routes(), key=lambda x: x.route)
             vals = []
             for endpoint_rule in routes:
-                vals.append(
-                    f"{endpoint_rule.route} ({', '.join(endpoint_rule.routing['methods'])})"
-                )
+                methods = ", ".join(endpoint_rule.routing["methods"])
+                vals.append(f"{endpoint_rule.route} ({methods})")
             rec.registered_routes = "\n".join(vals)
 
     @api.depends("profile_ids")

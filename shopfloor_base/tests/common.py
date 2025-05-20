@@ -201,6 +201,5 @@ class CommonCase(TransactionCase, RegistryMixin, ComponentMixin):
         self.assertDictEqual(
             response,
             expected,
-            "\n\nActual:\n%s"
-            "\n\nExpected:\n%s" % (pformat(response), pformat(expected)),
+            f"\n\nActual:\n{pformat(response)}" f"\n\nExpected:\n{pformat(expected)}",
         )

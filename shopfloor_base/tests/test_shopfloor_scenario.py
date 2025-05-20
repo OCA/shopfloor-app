@@ -10,7 +10,7 @@ from .common import CommonCase
 
 class TestShopfloorScenario(CommonCase):
     @classmethod
-    def setUpClassUsers(cls):
+    def setUpClassUsers(cls):  # pylint: disable=missing-return
         super().setUpClassUsers()
         cls.env = cls.env(user=cls.shopfloor_manager)
         return

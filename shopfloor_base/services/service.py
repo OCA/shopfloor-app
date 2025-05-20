@@ -56,8 +56,10 @@ class BaseShopfloorService(AbstractComponent):
         record = self._exposed_model.search(domain)
         if not record:
             raise exceptions.MissingError(
-                _("The record {model} {_id} does not exist").format(
-                    model=self._expose_model, _id=_id
+                _(
+                    "The record %(model)s %(id)s does not exist",
+                    model=self._expose_model,
+                    id=_id,
                 )
             )
         else:
@@ -231,7 +233,9 @@ class BaseShopfloorService(AbstractComponent):
             except (TypeError, ValueError) as err:
                 if not mandatory:
                     continue
-                raise BadRequest(f"{header_name} header validation error: {str(err)}") from err
+                raise BadRequest(
+                    f"{header_name} header validation error: {str(err)}"
+                ) from err
             ctx_value_handler = getattr(self, ctx_value_handler_name)
             dest_key, value = ctx_value_handler(header_value)
             if not value:

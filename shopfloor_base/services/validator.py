@@ -39,14 +39,14 @@ class ShopfloorRestCerberusValidator(Component):
     and sets the "input_param" and "output_param" to call the
     "_validator_<method>" or "_validator_return_<method>":
 
-    https://github.com/OCA/rest-framework/blob/abd74cd7241d3b93054825cc3e41cb7b693c9000/base_rest/models/rest_service_registration.py#L240-L250  # noqa
+    https://github.com/OCA/rest-framework/blob/abd74cd7241d3b93054825cc3e41cb7b693c9000/base_rest/models/rest_service_registration.py#L240-L250
 
     The following change in base_rest allows to customize the way the validator
     handler is get: https://github.com/OCA/rest-framework/pull/99
 
     This is what is used here to delegate to our ".validator" and
     ".validator.response" components.
-    """
+    """  # noqa
 
     _name = "shopfloor.rest.cerberus.validator"
     _inherit = "base.rest.cerberus.validator"
@@ -225,7 +225,8 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
             states_schemas = self._states()
             if self._start_state not in states_schemas:
                 raise ValueError(
-                    f"the _start_state is {self._start_state} but this state does not exist"
+                    f"the _start_state is {self._start_state} "
+                    "but this state does not exist"
                     ", you may want to change the property's value"
                 )
             unknown_states = set(next_states) - states_schemas.keys()

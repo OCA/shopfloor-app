@@ -44,7 +44,7 @@ class ShopfloorController(RestController):
                 try:
                     params.update(json.loads(data))
                 except (ValueError, json.decoder.JSONDecodeError) as e:
-                    msg = "Invalid JSON data: %s" % str(e)
+                    msg = f"Invalid JSON data: {e}"
                     _logger.info("%s: %s", request.httprequest.path, msg)
                     raise BadRequest(msg) from e
         return self._process_method(

@@ -27,11 +27,12 @@ class ShopfloorRestServiceAPISpec(BaseRestServiceAPISpec):
             base_url = env["ir.config_parameter"].sudo().get_param("web.base.url")
         return [
             {
-                "url": "%s/%s/%s"
-                % (
-                    base_url.rstrip("/"),
-                    self._service.collection.api_route.strip("/"),
-                    self._service._usage,
+                "url": "/".join(
+                    [
+                        base_url.rstrip("/"),
+                        self._service.collection.api_route.strip("/"),
+                        self._service._usage,
+                    ]
                 )
             }
         ]

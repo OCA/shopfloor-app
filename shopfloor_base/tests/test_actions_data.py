@@ -6,7 +6,7 @@ from .common_misc import ActionsDataTestMixin
 
 class ActionsDataCase(CommonCase, ActionsDataTestMixin):
     @classmethod
-    def setUpClassBaseData(cls):
+    def setUpClassBaseData(cls):  # pylint: disable=missing-return
         super().setUpClassBaseData()
         cls.partner = cls.env.ref("base.res_partner_12").sudo()
         return

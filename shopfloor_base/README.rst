@@ -16,14 +16,14 @@ Shopfloor Base
 .. |badge2| image:: https://img.shields.io/badge/licence-LGPL--3-blue.png
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fwms-lightgray.png?logo=github
-    :target: https://github.com/OCA/wms/tree/14.0/shopfloor_base
-    :alt: OCA/wms
+.. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fshopfloor--app-lightgray.png?logo=github
+    :target: https://github.com/OCA/shopfloor-app/tree/18.0/shopfloor_base
+    :alt: OCA/shopfloor-app
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/wms-14-0/wms-14-0-shopfloor_base
+    :target: https://translation.odoo-community.org/projects/shopfloor-app-18-0/shopfloor-app-18-0-shopfloor_base
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/wms&target_branch=14.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/shopfloor-app&target_branch=18.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -31,8 +31,9 @@ Shopfloor Base
 Shopfloor is a barcode scanner application.
 
 This module provides REST APIs to support scenario. It needs a frontend
-to consume the backend APIs and provide screens for users on barcode devices.
-A default front-end application is provided by ``shopfloor_mobile_base``.
+to consume the backend APIs and provide screens for users on barcode
+devices. A default front-end application is provided by
+``shopfloor_mobile_base``.
 
 **Table of contents**
 
@@ -43,13 +44,12 @@ Configuration
 =============
 
 Shopfloor config menu
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 In the main menu (or home screen) click on "Shopfloor".
 
-
 Profiles
-~~~~~~~~
+--------
 
 In Shopfloor / Profiles.
 
@@ -58,60 +58,60 @@ application. When a user logs in the scanner application, they have to
 select their profile, so the correct menus are shown.
 
 Menus
-~~~~~
+-----
 
 In Shopfloor / Menus.
 
-The menus are displayed on the frontend application.
-The configuration may come from the menu itself
-and/or from the scenario linked to it.
+The menus are displayed on the frontend application. The configuration
+may come from the menu itself and/or from the scenario linked to it.
 
-Their profile will restrict the visibility to the profile chosen on the device.
-If a menu has no profile, it is shown in every profile.
+Their profile will restrict the visibility to the profile chosen on the
+device. If a menu has no profile, it is shown in every profile.
 
 Some scenario may have additional options.
 
-
 Scenario
-~~~~~~~~
+--------
 
 In Shopfloor / Scenario.
 
-A Scenario represents a flow (or more basically "something to do" with the app.
-Each scenario must have a name and a unique key.
-The key must match a registered shopfloor service component.
+A Scenario represents a flow (or more basically "something to do" with
+the app. Each scenario must have a name and a unique key. The key must
+match a registered shopfloor service component.
 
 Usage
 =====
 
-An API key is created in the Demo data (for development), using
-the Demo user. The key to use in the HTTP header ``API-KEY`` is: 72B044F7AC780DAC
+An API key is created in the Demo data (for development), using the Demo
+user. The key to use in the HTTP header ``API-KEY`` is: 72B044F7AC780DAC
 
-Curl example::
+Curl example:
 
-  curl -X POST "http://localhost:8069/shopfloor/user/menu" -H  "accept: */*" -H  "Content-Type: application/json" -H "API-KEY: 72B044F7AC780DAC"
+::
+
+   curl -X POST "http://localhost:8069/shopfloor/user/menu" -H  "accept: */*" -H  "Content-Type: application/json" -H "API-KEY: 72B044F7AC780DAC"
 
 Known issues / Roadmap
 ======================
 
-* improve documentation
-* change shopfloor.scenario.key to selection? See comment in model
+- improve documentation
+- change shopfloor.scenario.key to selection? See comment in model
 
 Changelog
 =========
 
 13.0.1.0.0
-~~~~~~~~~~
+----------
 
 First official version.
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/OCA/wms/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/OCA/shopfloor-app/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/wms/issues/new?body=module:%20shopfloor_base%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/shopfloor-app/issues/new?body=module:%20shopfloor_base%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -119,47 +119,47 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Camptocamp
 * BCIM
 * Akretion
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Guewen Baconnier <guewen.baconnier@camptocamp.com>
-* Simone Orsi <simahawk@gmail.com>
-* Sébastien Alix <sebastien.alix@camptocamp.com>
-* Alexandre Fayolle <alexandre.fayolle@camptocamp.com>
-* Benoit Guillot <benoit.guillot@akretion.com>
-* Thierry Ducrest <thierry.ducrest@camptocamp.com>
-* Michael Tietz (MT Software) <mtietz@mt-software.de>
-* Denis Roussel <denis.roussel@acsone.eu>
-* Laurent Mignon <laurent.mignon@acsone.eu>
+- Guewen Baconnier <guewen.baconnier@camptocamp.com>
+- Simone Orsi <simahawk@gmail.com>
+- Sébastien Alix <sebastien.alix@camptocamp.com>
+- Alexandre Fayolle <alexandre.fayolle@camptocamp.com>
+- Benoit Guillot <benoit.guillot@akretion.com>
+- Thierry Ducrest <thierry.ducrest@camptocamp.com>
+- Michael Tietz (MT Software) <mtietz@mt-software.de>
+- Denis Roussel <<denis.roussel@acsone.eu>
+- Laurent Mignon <<laurent.mignon@acsone.eu>
 
 Design
 ~~~~~~
 
-* Joël Grand-Guillaume <joel.grandguillaume@camptocamp.com>
-* Jacques-Etienne Baudoux <je@bcim.be>
+- Joël Grand-Guillaume <joel.grandguillaume@camptocamp.com>
+- Jacques-Etienne Baudoux <je@bcim.be>
 
 Other credits
-~~~~~~~~~~~~~
+-------------
 
 **Financial support**
 
-* Cosanum
-* Camptocamp R&D
-* Akretion R&D
-* ACSONE R&D
+- Cosanum
+- Camptocamp R&D
+- Akretion R&D
+- ACSONE R&D
 
 **Icons**
 
-* Tablet app icon by Gregor Cresnar from the Noun Project
+- Tablet app icon by Gregor Cresnar from the Noun Project
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
 This module is maintained by the OCA.
 
@@ -185,6 +185,6 @@ Current `maintainers <https://odoo-community.org/page/maintainer-role>`__:
 
 |maintainer-guewen| |maintainer-simahawk| |maintainer-sebalix| 
 
-This module is part of the `OCA/wms <https://github.com/OCA/wms/tree/14.0/shopfloor_base>`_ project on GitHub.
+This module is part of the `OCA/shopfloor-app <https://github.com/OCA/shopfloor-app/tree/18.0/shopfloor_base>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.

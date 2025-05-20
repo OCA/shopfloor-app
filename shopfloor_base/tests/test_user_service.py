@@ -6,8 +6,8 @@ from .common_misc import MenuTestMixin
 
 class UserCase(CommonCase, MenuTestMixin):
     @classmethod
-    def setUpClassVars(cls, *args, **kwargs):
-        super().setUpClassVars(*args, **kwargs)
+    def setUpClassVars(cls):  # pylint: disable=missing-return
+        super().setUpClassVars()
         ref = cls.env.ref
         profile1 = ref("shopfloor_base.profile_demo_1")
         cls.profile = profile1.sudo().copy()

@@ -7,7 +7,7 @@ from .common import CommonCase
 
 class ActionsLockCase(CommonCase):
     @classmethod
-    def setUpClassBaseData(cls):
+    def setUpClassBaseData(cls):  # pylint: disable=missing-return
         super().setUpClassBaseData()
         cls.partner = cls.env.ref("base.res_partner_12")
         with cls.work_on_actions(cls) as work:

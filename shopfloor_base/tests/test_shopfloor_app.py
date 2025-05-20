@@ -11,13 +11,13 @@ from .common import CommonCase
 # @tagged("-at_install")
 class TestShopfloorApp(CommonCase):
     @classmethod
-    def setUpClassUsers(cls):
+    def setUpClassUsers(cls):  # pylint: disable=missing-return
         super().setUpClassUsers()
         cls.env = cls.env(user=cls.shopfloor_manager)
         return
 
     @classmethod
-    def setUpClassBaseData(cls):
+    def setUpClassBaseData(cls):  # pylint: disable=missing-return
         super().setUpClassBaseData()
         cls.records = cls.env["shopfloor.app"].create(
             {

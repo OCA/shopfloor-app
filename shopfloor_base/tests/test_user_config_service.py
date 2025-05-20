@@ -5,7 +5,7 @@ from .common import CommonCase
 
 class AppCase(CommonCase):
     @classmethod
-    def setUpClassVars(cls):
+    def setUpClassVars(cls):  # pylint: disable=missing-return
         super().setUpClassVars()
         cls.profile = cls.env.ref("shopfloor_base.profile_demo_1")
         cls.profile2 = cls.env.ref("shopfloor_base.profile_demo_2")
