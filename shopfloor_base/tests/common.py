@@ -66,7 +66,7 @@ class CommonCase(TransactionCase, RegistryMixin, ComponentMixin):
             # as we don't deal w/ real request for testing
             # but base_rest context provider needs it.
             request=mock.Mock(),
-            **params
+            **params,
         )
 
     def get_service(self, usage, collection=None, env=None, menu=None, **kw):
@@ -99,7 +99,7 @@ class CommonCase(TransactionCase, RegistryMixin, ComponentMixin):
 
     @classmethod
     def setUpClass(cls):
-        super(CommonCase, cls).setUpClass()
+        super().setUpClass()
         cls.env = cls.env(
             context=dict(
                 cls.env.context,

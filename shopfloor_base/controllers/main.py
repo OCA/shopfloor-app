@@ -22,7 +22,7 @@ class ShopfloorController(RestController):
         service_method_name,
         *args,
         collection=None,
-        **kwargs
+        **kwargs,
     ):
         """Wrapper for  `_process_method` call.
 
@@ -52,5 +52,5 @@ class ShopfloorController(RestController):
             service_method_name,
             *args,
             collection=collection,
-            params=params
+            params=params,
         )

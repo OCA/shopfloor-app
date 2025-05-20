@@ -62,9 +62,7 @@ class ShopfloorRestCerberusValidator(Component):
         else:
             suffix = "validator.response"
             method_name = method_name.replace("_validator_return_", "")
-        validator_component = self.component(
-            usage="{}.{}".format(service._usage, suffix)
-        )
+        validator_component = self.component(usage=f"{service._usage}.{suffix}")
         return validator_component, method_name
 
     def get_validator_handler(self, service, method_name, direction):
@@ -227,15 +225,13 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
             states_schemas = self._states()
             if self._start_state not in states_schemas:
                 raise ValueError(
-                    "the _start_state is {} but this state does not exist"
-                    ", you may want to change the property's value".format(
-                        self._start_state
-                    )
+                    f"the _start_state is {self._start_state} but this state does not exist"
+                    ", you may want to change the property's value"
                 )
             unknown_states = set(next_states) - states_schemas.keys()
             if unknown_states:
                 raise ValueError(
-                    "states {!r} are not defined in _states".format(unknown_states)
+                    f"states {unknown_states!r} are not defined in _states"
                 )
 
             data_schema = data_schema.copy()

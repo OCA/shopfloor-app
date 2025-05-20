@@ -11,13 +11,13 @@ except ImportError:
     _logger.debug("Can not import cerberus")
 
 
-class ActionsDataTestMixin(object):
+class ActionsDataTestMixin:
     def assert_schema(self, schema, data):
         validator = Validator(schema)
         self.assertTrue(validator.validate(data), validator.errors)
 
 
-class MenuTestMixin(object):
+class MenuTestMixin:
     def _assert_menu_response(self, response, menus, **kw):
         self.assert_response(
             response,
@@ -36,7 +36,7 @@ class MenuTestMixin(object):
         return data
 
 
-class OpenAPITestMixin(object):
+class OpenAPITestMixin:
     def _test_openapi(self, **kw):
         with self.work_on_services(**kw) as work:
             components = work.many_components()
@@ -46,7 +46,7 @@ class OpenAPITestMixin(object):
                     comp.to_openapi()
 
 
-class ScanAnythingTestMixin(object):
+class ScanAnythingTestMixin:
     def _test_response_ok(self, rec_type, data, identifier, record_types=None):
         service = self.get_service("scan_anything")
         params = {"identifier": identifier, "record_types": record_types}

@@ -170,17 +170,19 @@ class BaseShopfloorService(AbstractComponent):
             )
         if self._requires_header_profile:
             profile = profile_model.search([], limit=1)
-            service_params.append(
-                {
-                    "name": "SERVICE_CTX_PROFILE_ID",
-                    "in": "header",
-                    "description": "ID of the current profile",
-                    "required": True,
-                    "schema": {"type": "integer"},
-                    "style": "simple",
-                    "value": profile.id,
-                }
-            ),
+            (
+                service_params.append(
+                    {
+                        "name": "SERVICE_CTX_PROFILE_ID",
+                        "in": "header",
+                        "description": "ID of the current profile",
+                        "required": True,
+                        "schema": {"type": "integer"},
+                        "style": "simple",
+                        "value": profile.id,
+                    }
+                ),
+            )
         defaults.extend(service_params)
         return defaults
 
@@ -229,13 +231,11 @@ class BaseShopfloorService(AbstractComponent):
             except (TypeError, ValueError) as err:
                 if not mandatory:
                     continue
-                raise BadRequest(
-                    "{} header validation error: {}".format(header_name, str(err))
-                ) from err
+                raise BadRequest(f"{header_name} header validation error: {str(err)}") from err
             ctx_value_handler = getattr(self, ctx_value_handler_name)
             dest_key, value = ctx_value_handler(header_value)
             if not value:
-                raise BadRequest("{} header value lookup error".format(header_name))
+                raise BadRequest(f"{header_name} header value lookup error")
             extra_work_ctx[dest_key] = value
         for k, v in extra_work_ctx.items():
             setattr(self.work, k, v)

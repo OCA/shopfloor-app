@@ -233,7 +233,7 @@ class ShopfloorApp(models.Model):
                 method_name = name
                 default_route = root_path + "/" + routes[0].lstrip("/")
                 route_params = dict(
-                    route=["{}{}".format(root_path, r) for r in routes],
+                    route=[f"{root_path}{r}" for r in routes],
                     methods=[http_method],
                 )
                 # TODO: get this params from self?
