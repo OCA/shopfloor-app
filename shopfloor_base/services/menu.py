@@ -67,7 +67,7 @@ class ShopfloorMenu(Component):
         return [
             "id",
             "name",
-            "scenario",
+            "scenario_key:scenario",
         ]
 
 

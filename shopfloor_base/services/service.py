@@ -156,7 +156,7 @@ class BaseShopfloorService(AbstractComponent):
             # Try to first the first menu that implements the current service.
             # Not all usages have a process, in that case, we'll set the first
             # menu found
-            menu = menu_model.search([("scenario", "=", self._usage)], limit=1)
+            menu = menu_model.search([("scenario_id.key", "=", self._usage)], limit=1)
             if not menu:
                 menu = menu_model.search([], limit=1)
             service_params.append(
