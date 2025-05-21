@@ -4,7 +4,7 @@
 
 from werkzeug.exceptions import BadRequest
 
-from odoo import _, exceptions
+from odoo import exceptions
 from odoo.http import request
 from odoo.osv import expression
 from odoo.tools import DotDict
@@ -56,7 +56,7 @@ class BaseShopfloorService(AbstractComponent):
         record = self._exposed_model.search(domain)
         if not record:
             raise exceptions.MissingError(
-                _(
+                self.env._(
                     "The record %(model)s %(id)s does not exist",
                     model=self._expose_model,
                     id=_id,

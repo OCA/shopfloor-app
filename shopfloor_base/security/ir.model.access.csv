@@ -7,3 +7,4 @@
 "access_shopfloor_scenario_manager","shopfloor scenario manager","model_shopfloor_scenario","shopfloor_base.group_shopfloor_manager",1,1,1,1
 "access_shopfloor_app_users","shopfloor app","model_shopfloor_app","",1,0,0,0
 "access_shopfloor_app_manager","shopfloor app manager","model_shopfloor_app","shopfloor_base.group_shopfloor_manager",1,1,1,1
+"access_shopfloor_app_manager_lang","shopfloor app manager language read","base.model_res_lang","shopfloor_base.group_shopfloor_manager",1,0,0,0

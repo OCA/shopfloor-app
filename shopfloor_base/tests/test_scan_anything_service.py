@@ -76,6 +76,7 @@ class ScanAnythingCase(CommonCase, ScanAnythingTestMixin):
         )
 
         record = self.env.ref("base.EUR").sudo()
+        record.active = True
         rec_type = "testcurrency"
         identifier = record.name
         data = record.jsonify(["id", "name"], one=True)

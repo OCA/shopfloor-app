@@ -1,7 +1,6 @@
 # Copyright 2020 Camptocamp SA (http://www.camptocamp.com)
 # @author Simone Orsi <simahawk@gmail.com>
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-from odoo import _
 
 from odoo.addons.component.core import AbstractComponent
 
@@ -42,7 +41,7 @@ class ShopfloorFormMixin(AbstractComponent):
 
     def _msg_record_updated(self, record):
         model = self.env["ir.model"]._get(record._name)
-        body = _("%s updated.") % model.name
+        body = self.env._("%(model)s updated.", model=model.name)
         return {"message_type": "info", "body": body}
 
 

@@ -3,7 +3,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 import json
 
-from odoo.tests.common import Form
+from odoo.tests import Form
 
 from .common import CommonCase
 

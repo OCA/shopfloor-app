@@ -1,6 +1,5 @@
 # Copyright 2020 Camptocamp SA (http://www.camptocamp.com)
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-from odoo import _
 
 from odoo.addons.component.core import Component
 
@@ -22,7 +21,7 @@ class MessageAction(Component):
     def generic_record_not_found(self):
         return {
             "message_type": "error",
-            "body": _("Record not found."),
+            "body": self.env._("Record not found."),
         }
 
     # TODO: we should probably have `shopfloor.message` records

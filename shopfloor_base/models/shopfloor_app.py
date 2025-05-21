@@ -225,7 +225,7 @@ class ShopfloorApp(models.Model):
         root_path = self.api_route.rstrip("/") + "/" + service._usage
         for name, method in _inspect_methods(service.__class__):
             routing = getattr(method, ROUTING_DECORATOR_ATTR, None)
-            if not routing:
+            if routing is None:
                 continue
             for routes, http_method in routing["routes"]:
                 # TODO: why on base_rest we have this instead of pure method name?
@@ -324,10 +324,12 @@ class ShopfloorApp(models.Model):
     def _app_info_lang(self):
         enabled = []
         conv = self._app_convert_lang_code
+        default = self.sudo().lang_id
+        avail_langs = self.sudo().lang_ids
         if self.lang_ids:
-            enabled = [conv(x.code) for x in self.lang_ids]
+            enabled = [conv(x.code) for x in avail_langs]
         return dict(
-            default=conv(self.lang_id.code) if self.lang_id else False,
+            default=conv(default.code) if default else False,
             enabled=enabled,
         )
 

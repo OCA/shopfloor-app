@@ -7,7 +7,6 @@ import logging
 from odoo import api, fields, models
 
 from odoo.addons.base_sparse_field.models.fields import Serialized
-from odoo.addons.http_routing.models.ir_http import slugify
 
 _logger = logging.getLogger(__name__)
 
@@ -73,9 +72,8 @@ class ShopfloorScenario(models.Model):
         if not vals.get("key") and vals.get("name"):
             vals["key"] = self._normalize_key(vals["name"])
 
-    @staticmethod
-    def _normalize_key(name):
-        return slugify(name).replace("-", "_")
+    def _normalize_key(self, name):
+        return self.env["ir.http"]._slugify(name).replace("-", "_")
 
     def has_option(self, key):
         return self.options.get(key, False)

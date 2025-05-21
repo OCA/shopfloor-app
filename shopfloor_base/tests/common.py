@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from pprint import pformat
 from unittest import mock
 
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 
 from odoo.addons.base_rest.controllers.main import _PseudoCollection
 from odoo.addons.base_rest.tests.common import RegistryMixin

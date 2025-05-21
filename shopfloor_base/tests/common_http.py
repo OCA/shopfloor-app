@@ -7,14 +7,14 @@ import unittest
 import requests
 
 from odoo import tools
-from odoo.tests.common import HttpSavepointCase
+from odoo.tests import HttpCase
 
 from odoo.addons.base_rest.tests.common import RegistryMixin
 from odoo.addons.component.tests.common import ComponentMixin
 
 
 @unittest.skipIf(os.getenv("SKIP_HTTP_CASE"), "HttpCase skipped")
-class HttpCommonCase(HttpSavepointCase, RegistryMixin, ComponentMixin):
+class HttpCommonCase(HttpCase, RegistryMixin, ComponentMixin):
     """Common class for testing endpoints.
 
     Testing services is very good for unit/integration testing.
@@ -61,7 +61,7 @@ class HttpCommonCase(HttpSavepointCase, RegistryMixin, ComponentMixin):
     def setUp(self):
         # Have to initialize both odoo env and stuff +
         # the Component registry of the mixin
-        HttpSavepointCase.setUp(self)
+        HttpCase.setUp(self)
         ComponentMixin.setUp(self)
         # Make sure endpoints are available
         self.shopfloor_app._handle_registry_sync()

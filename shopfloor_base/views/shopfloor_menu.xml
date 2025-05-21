@@ -4,12 +4,12 @@
         <field name="name">shopfloor menu tree</field>
         <field name="model">shopfloor.menu</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle" />
                 <field name="name" />
                 <field name="scenario_id" widget="selection" />
                 <field name="profile_id" options="{'no_create': 1}" />
-            </tree>
+            </list>
         </field>
     </record>
     <record id="shopfloor_menu_form_view" model="ir.ui.view">
@@ -22,7 +22,7 @@
                         name="web_ribbon"
                         title="Archived"
                         bg_color="bg-danger"
-                        attrs="{'invisible': [('active', '=', True)]}"
+                        invisible="active"
                     />
                     <label for="name" class="oe_edit_only" />
                     <h1>
@@ -75,6 +75,6 @@
         <field name="name">Menus</field>
         <field name="res_model">shopfloor.menu</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

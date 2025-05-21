@@ -1,7 +1,7 @@
 # Copyright 2021 Camptocamp SA (http://www.camptocamp.com)
 # @author Simone Orsi <simahawk@gmail.com>
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-from odoo.tests.common import Form
+from odoo.tests import Form
 
 from odoo.addons.shopfloor_base.utils import APP_VERSION
 
@@ -161,7 +161,7 @@ class TestShopfloorApp(CommonCase):
     def test_lang_onchanges(self):
         lang_en, lang_fr = self.env.ref("base.lang_en"), self.env.ref("base.lang_fr")
         lang_fr.sudo().active = True
-        form = Form(self.shopfloor_app)
+        form = Form(self.shopfloor_app.with_user(self.shopfloor_manager))
         # No avail langs
         self.assertFalse(form.lang_id)
         self.assertFalse(form.lang_ids)

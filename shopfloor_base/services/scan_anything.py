@@ -2,7 +2,6 @@
 # Copyright 2021 ACSONE SA/NV (http://www.acsone.eu)
 # @author Simone Orsi <simahawk@gmail.com>
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-from odoo import _
 
 from odoo.addons.component.core import AbstractComponent, Component
 
@@ -58,9 +57,10 @@ class ShopfloorScanAnything(Component):
 
     def _response_for_not_found(self, tried):
         message = {
-            "body": _(
-                "Record not found.\n" "We've tried with the following types: {}"
-            ).format(", ".join(tried)),
+            "body": self.env._(
+                "Record not found.\n" "We've tried with the following types: %(tried)s",
+                tried=", ".join(tried),
+            ),
             "message_type": "error",
         }
         return self._response(message=message)
