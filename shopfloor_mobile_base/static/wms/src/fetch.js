@@ -4,9 +4,12 @@
  * License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
  */
 
-/* eslint-disable valid-jsdoc */
-/* eslint-disable no-implicit-globals */
 /* eslint-disable strict */
+// TODO: move to eslint.config.cjs?
+/* global window:true */
+/* global document:true */
+/* global Event:true */
+/* global fetch:false */
 
 // Credit https://stackoverflow.com/questions/43792026
 

@@ -15,8 +15,7 @@ from odoo.addons.shopfloor_base.utils import get_version
 _logger = logging.getLogger(__name__)
 
 
-class ShopfloorMobileAppMixin(object):
-
+class ShopfloorMobileAppMixin:
     module_path = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
     main_template = "shopfloor_mobile_base.shopfloor_app_main"
 
