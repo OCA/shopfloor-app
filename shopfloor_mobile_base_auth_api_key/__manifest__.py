@@ -8,7 +8,7 @@
     "version": "14.0.2.1.0",
     "development_status": "Beta",
     "category": "Inventory",
-    "website": "https://github.com/OCA/wms",
+    "website": "https://github.com/OCA/shopfloor-app",
     "author": "Camptocamp, Odoo Community Association (OCA)",
     "maintainer": ["simahawk"],
     "license": "LGPL-3",

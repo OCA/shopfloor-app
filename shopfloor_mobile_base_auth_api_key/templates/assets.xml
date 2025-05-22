@@ -10,8 +10,8 @@
         inherit_id="shopfloor_mobile_base.shopfloor_app_assets"
     >
         <script id="script_page_login" position="after">
-        <t t-set="mod_name" t-value="'shopfloor_mobile_base_auth_api_key'" />
-          <script
+            <t t-set="mod_name" t-value="'shopfloor_mobile_base_auth_api_key'" />
+            <script
                 id="script_login_api_key"
                 t-attf-src="/shopfloor_mobile_base_auth_api_key/static/wms/src/login.js?v=#{get_version(mod_name)}"
                 type="module"

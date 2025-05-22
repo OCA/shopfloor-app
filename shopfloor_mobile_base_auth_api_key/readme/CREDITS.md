@@ -1,3 +1,3 @@
 **Financial support**
 
-* Camptocamp R&D
+- Camptocamp R&D

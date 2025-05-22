@@ -6,7 +6,6 @@ from odoo import fields, models
 
 
 class ShopfloorApp(models.Model):
-
     # TODO: consider splitting this to new module shopfloor_base_auth_api_key
     _inherit = "shopfloor.app"
 
