@@ -3,12 +3,12 @@
  * License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
  */
 
-import {translation_registry} from "/shopfloor_mobile_base/static/wms/src/services/translation_registry.js";
+import {translation_registry} from "/shopfloor_mobile_base/static/src/services/translation_registry.esm.js";
 import {
     AuthHandlerMixin,
     auth_handler_registry,
-} from "/shopfloor_mobile_base/static/wms/src/services/auth_handler_registry.js";
-import {config_registry} from "/shopfloor_mobile_base/static/wms/src/services/config_registry.js";
+} from "/shopfloor_mobile_base/static/src/services/auth_handler_registry.esm.js";
+import {config_registry} from "/shopfloor_mobile_base/static/src/services/config_registry.esm.js";
 
 //  Register apikey storage
 config_registry.add("apikey", {default: "", reset_on_clear: true});
@@ -23,7 +23,7 @@ export class ApiKeyAuthHandler extends AuthHandlerMixin {
         };
     }
 
-    // on_login($root, evt, data) {
+    // On_login($root, evt, data) {
     // No need for a handler as we set the api_key inside the login method
     // }
 

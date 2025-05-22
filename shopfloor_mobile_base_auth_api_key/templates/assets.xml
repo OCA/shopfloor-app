@@ -13,7 +13,7 @@
             <t t-set="mod_name" t-value="'shopfloor_mobile_base_auth_api_key'" />
             <script
                 id="script_login_api_key"
-                t-attf-src="/shopfloor_mobile_base_auth_api_key/static/wms/src/login.js?v=#{get_version(mod_name)}"
+                t-attf-src="/shopfloor_mobile_base_auth_api_key/static/src/login.esm.js?v=#{get_version(mod_name)}"
                 type="module"
             />
         </script>
