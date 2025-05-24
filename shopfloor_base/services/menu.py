@@ -91,7 +91,7 @@ class ShopfloorMenuValidatorResponse(Component):
     _name = "shopfloor.service.menu.validator.response"
     _usage = "menu.validator.response"
 
-    def return_search(self):
+    def search(self):
         record_schema = self._record_schema
         return self._response_schema(
             {
