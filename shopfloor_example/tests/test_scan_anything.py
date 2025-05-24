@@ -8,12 +8,12 @@ from odoo.addons.shopfloor_base.tests.common_misc import ScanAnythingTestMixin
 
 class ScanAnythingCase(CommonCase, ScanAnythingTestMixin):
     @classmethod
-    def setUpClassUsers(cls):
+    def setUpClassUsers(cls):  # pylint: disable=missing-return
         super().setUpClassUsers()
         cls.shopfloor_user.groups_id += cls.env.ref("base.group_partner_manager")
 
     @classmethod
-    def setUpClassBaseData(cls):
+    def setUpClassBaseData(cls):  # pylint: disable=missing-return
         super().setUpClassBaseData()
         cls.record = cls.env.ref("base.res_partner_4")
         cls.record.ref = "1234"

@@ -7,7 +7,7 @@
     "summary": "Show how to customize the Shopfloor app frontend.",
     "version": "14.0.1.2.0",
     "author": "Camptocamp, ACSONE, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/wms",
+    "website": "https://github.com/OCA/shopfloor-app",
     "category": "Hidden",
     "license": "AGPL-3",
     "installable": True,

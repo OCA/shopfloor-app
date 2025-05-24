@@ -66,7 +66,6 @@ class PartnerExampleService(Component):
 
 
 class ShopfloorCheckoutValidator(Component):
-
     _inherit = "base.shopfloor.validator"
     _name = "shopfloor.partner_example.validator"
     _usage = "partner_example.validator"
@@ -88,7 +87,6 @@ class ShopfloorCheckoutValidator(Component):
 
 
 class ShopfloorCheckoutValidatorResponse(Component):
-
     _inherit = "base.shopfloor.validator.response"
     _name = "shopfloor.partner_example.validator.response"
     _usage = "partner_example.validator.response"
