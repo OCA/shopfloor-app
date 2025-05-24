@@ -5,7 +5,7 @@
 {
     "name": "Shopfloor example",
     "summary": "Show how to customize the Shopfloor app frontend.",
-    "version": "14.0.1.2.0",
+    "version": "18.0.1.0.0",
     "author": "Camptocamp, ACSONE, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/shopfloor-app",
     "category": "Hidden",
@@ -14,7 +14,8 @@
     "depends": [
         "shopfloor_base",
         "shopfloor_mobile_base",
-        "shopfloor_mobile_base_auth_user",
+        # Not migrated to 18.0 yet
+        # "shopfloor_mobile_base_auth_user",
         "shopfloor_mobile_base_auth_api_key",
     ],
     # fmt: off

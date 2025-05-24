@@ -15,7 +15,7 @@ class TestCustomServiceCase(CommonCase):
     def setUpClassBaseData(cls):  # pylint: disable=missing-return
         super().setUpClassBaseData()
         cls.record = cls.env.ref("base.res_partner_4")
-        cls.record.ref = "1234"
+        cls.record.sudo().ref = "1234"
 
     def _get_service(self):
         with self.work_on_services() as work:
