@@ -5,7 +5,7 @@
  * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
  */
 
-import {demotools} from "/shopfloor_mobile_base/static/wms/src/demo/demo.core.js";
+import {demotools} from "/shopfloor_mobile_base/static/src/demo/demo.core.js";
 
 const DEMO_CASE = {
     by_menu_id: {},

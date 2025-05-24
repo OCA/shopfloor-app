@@ -13,7 +13,7 @@
         <!-- <script id="script_scenario_checkout" position="after">
             <script
                 id="script_scenario_checkout"
-                t-attf-src="/#{mod_name}/static/wms/src/scenario/checkout.js?v=#{get_version(mod_name)}"
+                t-attf-src="/#{mod_name}/static/src/scenario/checkout.js?v=#{get_version(mod_name)}"
                 type="module"
             />
         </script> -->
@@ -21,12 +21,12 @@
             <t t-set="mod_name" t-value="'shopfloor_example'" />
             <script
                 id="script_detail_partner"
-                t-attf-src="/#{mod_name}/static/wms/src/components/detail/detail_partner.js?v=#{get_version(mod_name)}"
+                t-attf-src="/#{mod_name}/static/src/components/detail/detail_partner.js?v=#{get_version(mod_name)}"
                 type="module"
             />
             <script
                 id="script_scenario_partner"
-                t-attf-src="/#{mod_name}/static/wms/src/scenario/partner.js?v=#{get_version(mod_name)}"
+                t-attf-src="/#{mod_name}/static/src/scenario/partner.js?v=#{get_version(mod_name)}"
                 type="module"
             />
         </t>
@@ -39,7 +39,7 @@
             <t t-set="mod_name" t-value="'shopfloor_example'" />
             <script
                 id="script_demo_example"
-                t-attf-src="/#{mod_name}/static/wms/src/demo/demo.example.js?v=#{get_version(mod_name)}"
+                t-attf-src="/#{mod_name}/static/src/demo/demo.example.js?v=#{get_version(mod_name)}"
                 type="module"
             />
         </xpath>
