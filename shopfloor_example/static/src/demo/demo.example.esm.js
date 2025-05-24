@@ -40,22 +40,8 @@ const DEMO_CASE_1 = {
     },
 };
 
-// Detail/<int> mock endpoints
-example_partners_records.forEach((partner) => {
-    const key = "detail/" + partner.id;
-    DEMO_CASE_1[key] = _create_partner_detail_endpoint(partner);
-});
-
-// Scan/<int> mock endpoints
-Object.entries(demotools.indexed).forEach(([key, value]) => {
-    if (value.type !== "partner") return;
-    const case_key = "scan/" + key;
-    const partner = value.record;
-    DEMO_CASE_1[case_key] = _create_partner_detail_endpoint(partner);
-});
-
 function _create_partner_detail_endpoint(partner) {
-    let email;
+    let email = "";
     if (partner.id % 2) {
         email = demotools.makePartnerEmail(partner);
     }
@@ -73,6 +59,20 @@ function _create_partner_detail_endpoint(partner) {
         },
     };
 }
+
+// Detail/<int> mock endpoints
+example_partners_records.forEach((partner) => {
+    const key = "detail/" + partner.id;
+    DEMO_CASE_1[key] = _create_partner_detail_endpoint(partner);
+});
+
+// Scan/<int> mock endpoints
+Object.entries(demotools.indexed).forEach(([key, value]) => {
+    if (value.type !== "partner") return;
+    const case_key = "scan/" + key;
+    const partner = value.record;
+    DEMO_CASE_1[case_key] = _create_partner_detail_endpoint(partner);
+});
 
 DEMO_CASE.by_menu_id[example_menu_case] = DEMO_CASE_1;
 
