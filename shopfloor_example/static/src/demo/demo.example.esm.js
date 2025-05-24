@@ -40,13 +40,13 @@ const DEMO_CASE_1 = {
     },
 };
 
-// detail/<int> mock endpoints
+// Detail/<int> mock endpoints
 example_partners_records.forEach((partner) => {
     const key = "detail/" + partner.id;
     DEMO_CASE_1[key] = _create_partner_detail_endpoint(partner);
 });
 
-// scan/<int> mock endpoints
+// Scan/<int> mock endpoints
 Object.entries(demotools.indexed).forEach(([key, value]) => {
     if (value.type !== "partner") return;
     const case_key = "scan/" + key;
