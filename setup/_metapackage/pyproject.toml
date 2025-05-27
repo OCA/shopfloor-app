@@ -1,9 +1,10 @@
 [project]
 name = "odoo-addons-oca-shopfloor-app"
-version = "18.0.20250527.1"
+version = "18.0.20250527.2"
 dependencies = [
     "odoo-addon-shopfloor_base==18.0.*",
     "odoo-addon-shopfloor_mobile_base==18.0.*",
+    "odoo-addon-shopfloor_mobile_base_auth_api_key==18.0.*",
 ]
 classifiers=[
     "Programming Language :: Python",
