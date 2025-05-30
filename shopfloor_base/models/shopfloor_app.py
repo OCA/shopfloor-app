@@ -338,11 +338,9 @@ class ShopfloorApp(models.Model):
         return code.replace("_", "-")
 
     def _make_app_manifest(self, icons=None, **kw):
+        self = self.sudo()
         param = (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("web.base.url", "")
-            .rstrip("/")
+            self.env["ir.config_parameter"].get_param("web.base.url", "").rstrip("/")
         )
         manifest = {
             "name": self._name_with_env(),
