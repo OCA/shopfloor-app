@@ -4,10 +4,10 @@
         <field name="name">shopfloor.workstation tree</field>
         <field name="model">shopfloor.workstation</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" />
                 <field name="barcode" />
-            </tree>
+            </list>
         </field>
     </record>
     <record id="shopfloor_workstation_form_view" model="ir.ui.view">
@@ -20,13 +20,12 @@
                         name="web_ribbon"
                         title="Archived"
                         bg_color="bg-danger"
-                        attrs="{'invisible': [('active', '=', True)]}"
+                        invisible="active == True"
                     />
                     <group name="main">
                         <group name="main-info">
                             <field name="name" />
                             <field name="barcode" />
-                            <field name="active" invisible="1" />
                         </group>
                         <group name="printing">
                             <field name="printing_printer_id" />
@@ -58,7 +57,7 @@
         <field name="name">Workstation</field>
         <field name="res_model">shopfloor.workstation</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
     <menuitem
         action="action_shopfloor_workstation"

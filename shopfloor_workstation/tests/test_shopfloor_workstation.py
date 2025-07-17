@@ -5,7 +5,7 @@ from psycopg2 import IntegrityError
 
 from odoo.tools import mute_logger
 
-from odoo.addons.shopfloor.tests.common import CommonCase
+from odoo.addons.shopfloor_base.tests.common import CommonCase
 
 
 class ShopfloorWorkstationCase(CommonCase):

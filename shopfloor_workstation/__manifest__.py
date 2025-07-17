@@ -3,15 +3,15 @@
 
 {
     "name": "Shopfloor Workstation",
-    "summary": "Manage warehouse workstation with barcode scanners",
-    "version": "16.0.1.0.0",
+    "summary": "Manage workstation within a shopfloor application",
+    "version": "18.0.1.0.0",
     "development_status": "Beta",
     "category": "Inventory",
     "website": "https://github.com/OCA/shopfloor-app",
     "author": "Camptocamp, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "application": False,
-    "depends": ["shopfloor", "base_report_to_printer"],
+    "depends": ["shopfloor_base", "base_report_to_printer"],
     "demo": ["demo/shopfloor_workstation_demo.xml"],
     "data": ["security/ir.model.access.csv", "views/shopfloor_workstation.xml"],
 }
