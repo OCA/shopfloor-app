@@ -67,17 +67,21 @@ class ShopfloorWorkstationCase(CommonCase):
 
     def test_workstation_constraints(self):
         # Name constraint
-        with self.assertRaisesRegex(
-            IntegrityError, "name_unique"
-        ), self.env.cr.savepoint(), mute_logger("odoo.sql_db"):
+        with (
+            self.assertRaisesRegex(IntegrityError, "name_unique"),
+            self.env.cr.savepoint(),
+            mute_logger("odoo.sql_db"),
+        ):
             self.env["shopfloor.workstation"].sudo().create(
                 {"name": self.ws1.name, "barcode": "new barcode"}
             )
 
         # Barcode constraint
-        with self.assertRaisesRegex(
-            IntegrityError, "barcode_unique"
-        ), self.env.cr.savepoint(), mute_logger("odoo.sql_db"):
+        with (
+            self.assertRaisesRegex(IntegrityError, "barcode_unique"),
+            self.env.cr.savepoint(),
+            mute_logger("odoo.sql_db"),
+        ):
             self.env["shopfloor.workstation"].sudo().create(
                 {"name": "new name", "barcode": self.ws1.barcode}
             )
