@@ -26,6 +26,7 @@ addon | version | maintainers | summary
 [shopfloor_mobile_base](shopfloor_mobile_base/) | 18.0.1.0.0 | <a href='https://github.com/simahawk'><img src='https://github.com/simahawk.png' width='32' height='32' style='border-radius:50%;' alt='simahawk'/></a> | Mobile frontend for WMS Shopfloor app
 [shopfloor_mobile_base_auth_api_key](shopfloor_mobile_base_auth_api_key/) | 18.0.1.0.0 |  | Provides authentication via API key to Shopfloor base mobile app
 [shopfloor_workstation](shopfloor_workstation/) | 18.0.1.0.0 |  | Manage workstation within a shopfloor application
+[shopfloor_workstation_mobile](shopfloor_workstation_mobile/) | 18.0.1.0.0 |  | Shopfloor mobile app integration for workstation
 
 [//]: # (end addons)
 
