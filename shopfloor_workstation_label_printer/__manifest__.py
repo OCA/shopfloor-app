@@ -3,7 +3,7 @@
 
 {
     "name": "Shopfloor Workstation Label Printer",
-    "summary": "Adds a label printer configuration to the user and shopfloor workstation.",
+    "summary": "Adds a label printer configuration to user and shopfloor workstation.",
     "version": "14.0.1.1.0",
     "category": "Tools",
     "author": "Camptocamp, Odoo Community Association (OCA)",
