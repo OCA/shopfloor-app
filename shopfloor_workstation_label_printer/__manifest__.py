@@ -3,14 +3,14 @@
 
 {
     "name": "Shopfloor Workstation Label Printer",
-    "summary": "Adds a label printer configuration to user and shopfloor workstation.",
-    "version": "14.0.1.1.0",
+    "summary": "Adds a label printer configuration to shopfloor workstation.",
+    "version": "18.0.1.0.0",
     "category": "Tools",
     "author": "Camptocamp, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/wms",
+    "website": "https://github.com/OCA/shopfloor-app",
     "development_status": "Alpha",
     "license": "AGPL-3",
     "depends": ["base_report_to_label_printer", "shopfloor_workstation"],
-    "data": ["views/res_users.xml", "views/shopfloor_workstation.xml"],
+    "data": ["views/shopfloor_workstation.xml"],
     "installable": True,
 }
