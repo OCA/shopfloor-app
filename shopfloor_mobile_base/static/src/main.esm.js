@@ -262,9 +262,9 @@ new Vue({
             const self = this;
             return this._loadConfig().then(function (result) {
                 if (result.error) {
-                    self.trigger("login:success", {root: self});
-                } else {
                     self.trigger("login:failure", {root: self});
+                } else {
+                    self.trigger("login:success", {root: self});
                 }
             });
         },
