@@ -32,7 +32,7 @@
             <t t-set="head">
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <script type="text/javascript">
-          var shopfloor_app_info = <t t-raw="json.dumps(app_info)" />;
+          var shopfloor_app_info = <t t-out="json.dumps(app_info)" />;
         </script>
                 <t t-call="shopfloor_mobile_base.shopfloor_app_assets" />
                 <t
