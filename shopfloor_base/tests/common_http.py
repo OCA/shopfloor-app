@@ -6,7 +6,6 @@ import unittest
 
 import requests
 
-from odoo import tools
 from odoo.tests import HttpCase
 
 from odoo.addons.base_rest.tests.common import RegistryMixin
@@ -67,7 +66,7 @@ class HttpCommonCase(HttpCase, RegistryMixin, ComponentMixin):
         self.shopfloor_app._handle_registry_sync()
 
     def _make_url(self, route):
-        return "http://127.0.0.1:{}{}".format(tools.config["http_port"], route)
+        return f"{self.base_url()}/{route}"
 
     def _make_request(self, route, api_key=None, menu=None, profile=None, headers=None):
         # use requests because you cannot easily manipulate the request w/ `url_open`
