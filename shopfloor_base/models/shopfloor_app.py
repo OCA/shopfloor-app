@@ -190,8 +190,10 @@ class ShopfloorApp(models.Model):
         for service in services:
             self._prepare_non_decorated_endpoints(service)
 
-    def _register_controllers(self, init=False, options=None):
-        super()._register_controllers(init=init, options=options)
+    def _register_controllers(self, init=False, options=None, clear_cache=True):
+        super()._register_controllers(
+            init=init, options=options, clear_cache=clear_cache
+        )
         if not self:
             return
         self._register_base_rest_routes()

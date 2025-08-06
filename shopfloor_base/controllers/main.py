@@ -39,7 +39,7 @@ class ShopfloorController(RestController):
         except AttributeError:
             httprequest = request.httprequest
         if httprequest.mimetype == "application/json":
-            data = httprequest.get_data().decode(httprequest.charset)
+            data = httprequest.get_data().decode()
             if data:
                 try:
                     params.update(json.loads(data))

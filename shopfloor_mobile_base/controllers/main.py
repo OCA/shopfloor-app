@@ -102,22 +102,41 @@ class ShopfloorMobileAppMixin:
 class ShopfloorMobileAppController(http.Controller, ShopfloorMobileAppMixin):
     @http.route(
         [
-            "/shopfloor/app/<tech_name(shopfloor.app):shopfloor_app>",
-            "/shopfloor/app/<tech_name(shopfloor.app):shopfloor_app>/<string:demo>",
+            # FIXME: this bug in odoo prevents using the `tech_name` converter
+            # because it checks if the record has public access enabled.
+            # https://github.com/odoo/odoo/pull/221005
+            # "/shopfloor/app/<tech_name(shopfloor.app):shopfloor_app>",
+            # "/shopfloor/app/<tech_name(shopfloor.app):shopfloor_app>/<string:demo>",
+            "/shopfloor/app/<string:shopfloor_app>",
+            "/shopfloor/app/<string:shopfloor_app>/<string:demo>",
         ],
         auth="public",
     )
     def load_app(self, shopfloor_app, demo=False, **kw):
+        shopfloor_app = self._get_app(shopfloor_app)
         return self._load_app(shopfloor_app, demo=True if demo else False, **kw)
 
     @http.route(
         [
-            "/shopfloor/app/<tech_name(shopfloor.app):shopfloor_app>/manifest.json",
+            "/shopfloor/app/<string:shopfloor_app>/manifest.json",
         ],
         auth="public",
     )
     def manifest(self, shopfloor_app):
+        shopfloor_app = self._get_app(shopfloor_app)
         manifest = self._get_manifest(shopfloor_app)
         headers = {}
         headers["Content-Type"] = "application/json"
         return http.request.make_response(json.dumps(manifest), headers=headers)
+
+    def _get_app(self, tech_name):
+        # FIXME: workaround for the bug mentioned above.
+        # This work should be done by the `tech_name` converter.
+        shopfloor_app = (
+            http.request.env["shopfloor.app"]
+            .sudo()
+            .search([("tech_name", "=", tech_name)], limit=1)
+        )
+        if not shopfloor_app:
+            raise http.NotFound()
+        return shopfloor_app

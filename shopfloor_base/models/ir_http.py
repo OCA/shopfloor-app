@@ -9,6 +9,12 @@ from odoo.http import request
 from odoo.addons.base.models.ir_http import RequestUID
 
 
+# /!\/!\/!\/!\ WARNING /!\/!\//!\/!\//!\/!\//!\/!\//!\/!\//!\/!\
+# This converter does not work with the standard since v18.
+# See https://github.com/odoo/odoo/pull/221005
+# Until a proper fix is implemented,
+# each controller should be responsible for finding the app.
+# See shopfloor_base.controllers.main.ShopfloorMobileAppController
 class TechNameConverter(werkzeug.routing.BaseConverter):
     """Record converter via tech_name field.
 
