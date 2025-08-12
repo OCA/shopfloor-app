@@ -4,14 +4,11 @@
 
 import logging
 
-from odoo import SUPERUSER_ID, api
-
 _logger = logging.getLogger(__name__)
 
 
-def post_init_hook(cr, registry):
+def post_init_hook(env):
     _logger.info("Enabling DB logging for Shopfloor app")
-    env = api.Environment(cr, SUPERUSER_ID, {})
     params = env["ir.config_parameter"].sudo()
     key = "rest.log.active"
     shopfloor_value = "shopfloor.app"
