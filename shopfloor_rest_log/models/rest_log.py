@@ -12,6 +12,7 @@ class RestLog(models.Model):
         comodel_name="res.users",
         string="Real user",
         help="Some services might use a different user in the environment. "
-        "Whenever possible, this field will hold a reference to the real user doing the call. "
+        "Whenever possible, this field will hold a reference "
+        "to the real user doing the call. "
         "This information can be found in the header `App-User-Id`.",
     )
