@@ -8,7 +8,7 @@ export function loadJSON(callback, url) {
     xobj.overrideMimeType("application/json");
     xobj.open("GET", url, false); // False -> synchronous call to be sure to  have the result before the registry is used by others JS
     xobj.onreadystatechange = function () {
-        if (xobj.readyState === 4 && xobj.status === "200") {
+        if (xobj.readyState === 4 && parseInt(xobj.status, 10) === 200) {
             const json = JSON.parse(xobj.responseText);
             return callback(json);
         }
