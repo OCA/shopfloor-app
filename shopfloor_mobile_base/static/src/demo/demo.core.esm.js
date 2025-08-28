@@ -51,8 +51,14 @@ export class DemoTools {
                 qty: 5000,
             }),
         ];
+        this.uom_unit = {
+            id: this.getRandomInt(),
+            name: "Units",
+            factor: 1.0,
+            rounding: 3,
+        };
         this.uoms = [
-            {id: this.getRandomInt(), name: "Units", factor: 1.0, rounding: 3},
+            this.uom_unit,
             {id: this.getRandomInt(), name: "Dozen", factor: 12.0, rounding: 3},
             {id: this.getRandomInt(), name: "Pair", factor: 2.0, rounding: 1},
         ];
@@ -183,6 +189,8 @@ export class DemoTools {
             name: "Packaging",
             code: "PKG",
             qty: 1,
+            is_unit: false,
+            id: this.getRandomInt(),
         });
         const rec = this.makeSimpleRecord(defaults, options);
         this.index_record("name", rec, "packaging");
@@ -501,7 +509,7 @@ export class DemoTools {
         return profiles;
     }
     getAppMenus() {
-        return _.sortBy(this.app_menus, "scenario");
+        return _.sortBy(this.app_menus, ["sequence", "scenario"]);
     }
     /**
      *
@@ -520,6 +528,7 @@ export class DemoTools {
                 menu_id = this.getRandomInt();
             }
         }
+        new_item.sequence = new_item.sequence || this.app_menus.length + 1;
         new_item.id = menu_id;
         this.app_menus_by_id[menu_id] = new_item;
 
