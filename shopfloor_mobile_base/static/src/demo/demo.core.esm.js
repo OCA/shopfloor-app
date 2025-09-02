@@ -190,7 +190,11 @@ export class DemoTools {
             code: "PKG",
             qty: 1,
             is_unit: false,
-            id: this.getRandomInt(),
+            barcode: "PKG-" + this.makeProductCode(),
+            length: this.getRandomInt(100),
+            width: this.getRandomInt(100),
+            height: this.getRandomInt(100),
+            max_weight: this.getRandomInt(100) + " Kg",
         });
         const rec = this.makeSimpleRecord(defaults, options);
         this.index_record("name", rec, "packaging");
