@@ -409,6 +409,29 @@ export class DemoTools {
         });
     }
 
+    makeMove(defaults = {}, options = {}) {
+        _.defaults(defaults, {
+            qty_done: 0,
+        });
+        _.defaults(options, {
+            qty_done_random: true,
+        });
+        const product = this.makeProduct();
+        // Always get a multiple of real packaging
+        const random_pkg = this.randomItemFromArray(product.packaging);
+        const qty = random_pkg.qty * this.getRandomInt(10);
+        let qty_done = options.qty_done_full ? qty : defaults.qty_done;
+        qty_done = options.qty_done_random ? this.getRandomInt(qty) : qty_done;
+        return _.defaults({}, defaults, {
+            id: this.getRandomInt(),
+            quantity: qty,
+            quantity_done: qty_done,
+            product: product,
+            lot: this.makeLot(),
+            progress: this.getRandomInt(100),
+        });
+    }
+
     makeBatch(defaults = {}, options = {}) {
         _.defaults(defaults, {
             weight: this.getRandomInt(1000) + " Kg",
