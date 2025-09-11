@@ -98,7 +98,7 @@ export class DemoTools {
         const start = new Date();
         const stop = new Date();
         stop.setDate(start.getDate() + days);
-        return stop;
+        return stop.toISOString();
     }
 
     batchList(count = 5) {
