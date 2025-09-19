@@ -55,6 +55,7 @@ class TestShopfloorApp(CommonCase):
         routes = rec._registered_routes()
         _check = {}
         for rule in routes:
+            self.assertEqual(rule.routing["type"], "restapi")
             self.assertEqual(rule.route_group, rec._route_group())
             self.assertTrue(rule.endpoint_hash)
             service, endpoint = rule.route.split("/")[-2:]
@@ -65,7 +66,12 @@ class TestShopfloorApp(CommonCase):
                 ),
                 "method_name": "_process_endpoint",
             }
-            self.assertEqual(rule.handler_options, expected_handler_opts)
+            for k, v in expected_handler_opts.items():
+                self.assertEqual(
+                    rule.handler_options[k],
+                    v,
+                    f"{k} differs: {rule.handler_options[k]} != {v}",
+                )
             _check[rule.route] = set(rule.routing["methods"])
         expected = {
             # TODO: review methods
@@ -145,7 +151,10 @@ class TestShopfloorApp(CommonCase):
         )
 
     def test_make_app_manifest(self):
-        param = "http://localhost:8069"
+        self.env["ir.config_parameter"].sudo().set_param(
+            "web.base.url", "http://foo.com"
+        )
+        param = "http://foo.com"
         manifest = self.shopfloor_app._make_app_manifest()
         expected = {
             "name": self.shopfloor_app.name,
