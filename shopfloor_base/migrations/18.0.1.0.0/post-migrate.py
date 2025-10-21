@@ -25,7 +25,7 @@ def migrate(cr, version):
         registry = app._endpoint_registry
         rules = list(registry.get_rules_by_group(app._route_group()))
         for rule in rules:
-            rule.routing = dict(rule.routing, readonly=True, type="restapi")
+            rule.routing = dict(rule.routing, readonly=False, type="restapi")
         registry.update_rules(rules)
     _logger.info(
         "Forced endpoint route sync on %s records: %s", model._name, records.ids
