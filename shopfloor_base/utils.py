@@ -102,7 +102,19 @@ def register_new_services(env, *component_classes, apps=None):
     if not components:
         return
     apps = apps or env["shopfloor.app"].search([])
-    apps.with_context(sf_service_components=components)._register_controllers()
+    force_register_controllers(
+        env, apps=apps.with_context(sf_service_components=components)
+    )
+
+
+def force_register_controllers(env, apps=None):
+    """Force re-registration of all services endpoints for all apps.
+
+    Useful when the component registry is not fully ready
+    at module install time and some services are missing their routes.
+    """
+    apps = apps or env["shopfloor.app"].search([])
+    apps._register_controllers()
 
 
 def load_components_without_registry(env, *component_classes):
