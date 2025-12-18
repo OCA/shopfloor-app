@@ -15,7 +15,7 @@ Vue.component("item-detail-card", {
             <v-card-title v-if="!opts.no_title" :class="opts.title_class">
                 <slot name="title">
                     <v-icon v-if="opts.title_icon" v-text="opts.title_icon" class="mr-2" />
-                    <span v-text="_.result(record, opts.key_title)" />
+                    <span v-text="_.result(record, opts.key_title, opts.title_default || '')" />
                     <v-btn icon class="detail-action" :class="{'theme--dark': opts.theme_dark}" link
                             v-if="opts.on_title_action || opts.title_action_field"
                             @click="opts.on_title_action ? opts.on_title_action(record): on_detail_action(record, opts.title_action_field)">
