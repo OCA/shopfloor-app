@@ -119,7 +119,9 @@ export var DatePicker = Vue.component("date-picker-input", {
                 return;
             }
 
-            let year, month, day;
+            let year = "";
+            let month = "";
+            let day = "";
             for (let i = 0; i < dateParts.length; i++) {
                 switch (fmtParts[i]) {
                     case "dd":
