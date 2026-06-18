@@ -4,12 +4,10 @@ from contextlib import contextmanager
 from pprint import pformat
 from unittest import mock
 
-from odoo.tests import TransactionCase
-
 from odoo.addons.base_rest.controllers.main import _PseudoCollection
 from odoo.addons.base_rest.tests.common import RegistryMixin
 from odoo.addons.component.core import WorkContext
-from odoo.addons.component.tests.common import ComponentMixin
+from odoo.addons.component.tests.common import TransactionComponentCase
 
 
 class AnyObject:
@@ -26,7 +24,7 @@ class AnyObject:
         return True
 
 
-class CommonCase(TransactionCase, RegistryMixin, ComponentMixin):
+class CommonCase(TransactionComponentCase, RegistryMixin):
     """Base class for writing Shopfloor tests
 
     All tests are run as normal stock user by default, to check that all the
@@ -87,15 +85,6 @@ class CommonCase(TransactionCase, RegistryMixin, ComponentMixin):
         yield WorkContext(
             model_name="rest.service.registration", collection=collection, **params
         )
-
-    # pylint: disable=method-required-super
-    # super is called "the old-style way" to call both super classes in the
-    # order we want
-    def setUp(self):
-        # Have to initialize both odoo env and stuff +
-        # the Component registry of the mixin
-        TransactionCase.setUp(self)
-        ComponentMixin.setUp(self)
 
     @classmethod
     def setUpClass(cls):

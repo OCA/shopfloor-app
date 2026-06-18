@@ -9,11 +9,11 @@ import requests
 from odoo.tests import HttpCase
 
 from odoo.addons.base_rest.tests.common import RegistryMixin
-from odoo.addons.component.tests.common import ComponentMixin
+from odoo.addons.component.tests.common import TransactionComponentCase
 
 
 @unittest.skipIf(os.getenv("SKIP_HTTP_CASE"), "HttpCase skipped")
-class HttpCommonCase(HttpCase, RegistryMixin, ComponentMixin):
+class HttpCommonCase(HttpCase, TransactionComponentCase, RegistryMixin):
     """Common class for testing endpoints.
 
     Testing services is very good for unit/integration testing.
@@ -54,14 +54,8 @@ class HttpCommonCase(HttpCase, RegistryMixin, ComponentMixin):
             }
         )
 
-    # pylint: disable=method-required-super
-    # super is called "the old-style way" to call both super classes in the
-    # order we want
     def setUp(self):
-        # Have to initialize both odoo env and stuff +
-        # the Component registry of the mixin
-        HttpCase.setUp(self)
-        ComponentMixin.setUp(self)
+        super().setUp()
         # Make sure endpoints are available
         self.shopfloor_app._handle_registry_sync()
 
