@@ -98,7 +98,7 @@ export class DemoTools {
         const start = new Date();
         const stop = new Date();
         stop.setDate(start.getDate() + days);
-        return stop;
+        return stop.toISOString();
     }
 
     batchList(count = 5) {
@@ -190,7 +190,11 @@ export class DemoTools {
             code: "PKG",
             qty: 1,
             is_unit: false,
-            id: this.getRandomInt(),
+            barcode: "PKG-" + this.makeProductCode(),
+            length: this.getRandomInt(100),
+            width: this.getRandomInt(100),
+            height: this.getRandomInt(100),
+            max_weight: this.getRandomInt(100) + " Kg",
         });
         const rec = this.makeSimpleRecord(defaults, options);
         this.index_record("name", rec, "packaging");
@@ -402,6 +406,29 @@ export class DemoTools {
             origin: "S0" + this.getRandomInt(),
             location_src: this.makeLocation({}, {name_prefix: "LOC-SRC"}),
             location_dest: this.makeLocation({}, {name_prefix: "LOC-DST"}),
+        });
+    }
+
+    makeMove(defaults = {}, options = {}) {
+        _.defaults(defaults, {
+            qty_done: 0,
+        });
+        _.defaults(options, {
+            qty_done_random: true,
+        });
+        const product = this.makeProduct();
+        // Always get a multiple of real packaging
+        const random_pkg = this.randomItemFromArray(product.packaging);
+        const qty = random_pkg.qty * this.getRandomInt(10);
+        let qty_done = options.qty_done_full ? qty : defaults.qty_done;
+        qty_done = options.qty_done_random ? this.getRandomInt(qty) : qty_done;
+        return _.defaults({}, defaults, {
+            id: this.getRandomInt(),
+            quantity: qty,
+            quantity_done: qty_done,
+            product: product,
+            lot: this.makeLot(),
+            progress: this.getRandomInt(100),
         });
     }
 
