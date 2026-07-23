@@ -1,5 +1,6 @@
 # Copyright 2020-2021 Camptocamp SA (http://www.camptocamp.com)
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+import json
 import logging
 
 from odoo.addons.component.core import AbstractComponent, Component
@@ -8,6 +9,26 @@ from odoo.addons.component.exception import NoComponentError
 from ..actions.base_action import get_actions_for
 
 _logger = logging.getLogger(__name__)
+
+
+def _coerce_json_encoded_string(value):
+    """Cerberus `coerce` rule: turn `value` into a JSON-encoded string.
+
+    Lets callers pass any JSON-serializable value (dict, list, ...) instead
+    of having to `json.dumps` it themselves. A string is assumed to be
+    already JSON-encoded and is only checked, not re-encoded. `None` is
+    passed through untouched: pair with `"nullable": True` to keep the
+    field optional.
+
+    Raises if the value can't be serialized (or, for a string, parsed);
+    Cerberus turns that into a normal validation error.
+    """
+    if value is None:
+        return value
+    if isinstance(value, str):
+        json.loads(value)
+        return value
+    return json.dumps(value)
 
 
 class ShopfloorRestCerberusValidator(Component):
@@ -159,6 +180,11 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
 
     # Initial state of a workflow
     _start_state = "start"
+    # Special state, common to all scenarios, used to hand off to another
+    # scenario's menu. Handled directly in `_response_schema` (like
+    # `_start_state`) so scenario-specific `_states()` overrides never need
+    # to declare it.
+    _jump_to_menu_state = "jump_to_menu"
 
     def _states(self):
         """List of possible next states
@@ -167,6 +193,31 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
         to the next state.
         """
         return {}
+
+    def _jump_to_menu_schema(self):
+        """Schema for the `jump_to_menu` special state.
+
+        `states_data` is a JSON-encoded string: its shape depends on the
+        target scenario/state, which is not known here, so it stays opaque
+        and is validated by the target scenario once it is loaded there.
+
+        It's a `{state_key: data}` map, not just data for the landing state
+        (`next_state`): a scenario's state can need data that was computed
+        or stored on a different state of the same scenario, so landing
+        directly on a state without also seeding the other states it
+        depends on would leave that data missing. Include an entry for
+        `next_state` itself in the map too, if it needs data.
+        """
+        return {
+            "menu_id": {"type": "integer", "required": True},
+            "next_state": {"type": "string", "required": True},
+            "states_data": {
+                "type": "string",
+                "required": False,
+                "nullable": True,
+                "coerce": _coerce_json_encoded_string,
+            },
+        }
 
     def _actions_for(self, usage, **kw):
         return get_actions_for(self, usage, **kw)
@@ -222,6 +273,7 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
         if next_states:
             next_states = set(next_states)
             next_states.add(self._start_state)
+            next_states.add(self._jump_to_menu_state)
             states_schemas = self._states()
             if self._start_state not in states_schemas:
                 raise ValueError(
@@ -229,6 +281,10 @@ class BaseShopfloorValidatorResponse(AbstractComponent):
                     "but this state does not exist"
                     ", you may want to change the property's value"
                 )
+            states_schemas = dict(states_schemas)
+            states_schemas.setdefault(
+                self._jump_to_menu_state, self._jump_to_menu_schema()
+            )
             unknown_states = set(next_states) - states_schemas.keys()
             if unknown_states:
                 raise ValueError(
