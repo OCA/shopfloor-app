@@ -18,3 +18,22 @@ class DataAction(Component):
     @property
     def _partner_detail_parser(self):
         return self._simple_record()
+
+    @ensure_model("res.partner")
+    def partner_listing(self, records, **kw):
+        return self._jsonify(records, self._partner_listing_parser, multi=True, **kw)
+
+    @property
+    def _partner_listing_parser(self):
+        return ["id", "display_name:name", "country_id:country"]
+
+    @ensure_model("res.country")
+    def country(self, record, **kw):
+        return self._jsonify(record, self._country_parser, **kw)
+
+    def countries(self, records, **kw):
+        return self.country(records, multi=True)
+
+    @property
+    def _country_parser(self):
+        return ["id", "name"]

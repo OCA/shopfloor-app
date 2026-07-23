@@ -59,7 +59,7 @@ class PartnerExampleService(Component):
         )
 
     def _response_for_partner_list(self, records, message=None, popup=None):
-        data = {"records": self.data.partners(records)}
+        data = {"records": self.data.partner_listing(records)}
         return self._response(
             next_state="listing", data=data, message=message, popup=popup
         )
@@ -105,7 +105,7 @@ class ShopfloorCheckoutValidatorResponse(Component):
                 )
             },
             "listing": {
-                "records": self.schemas._schema_list_of(self.schemas.partner()),
+                "records": self.schemas._schema_list_of(self.schemas.partner_listing()),
             },
         }
 

@@ -18,3 +18,14 @@ class DataDetailAction(Component):
     @property
     def _partner_detail_parser(self):
         return ["id", "name", "ref", "email"]
+
+    @ensure_model("res.country")
+    def country_detail(self, record, **kw):
+        return self._jsonify(record, self._country_detail_parser, **kw)
+
+    def country_details(self, record, **kw):
+        return self.country_detail(record, multi=True)
+
+    @property
+    def _country_detail_parser(self):
+        return ["id", "name", "code", "phone_code"]

@@ -24,6 +24,7 @@ const Partner = {
                     :records="state.data.records"
                     :key="make_state_component_key(['manual-select'])"
                     :options="{showActions: false}"
+                    :list_item_fields="[{path: 'country'}]"
                     />
             </div>
             <div v-if="state_is('detail')">
