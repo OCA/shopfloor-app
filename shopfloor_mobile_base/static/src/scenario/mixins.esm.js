@@ -190,9 +190,10 @@ export var ScenarioBaseMixin = {
             bits.unshift(this.usage);
             return this.make_component_key(bits);
         },
-        storage_key: function (state_key) {
+        storage_key: function (state_key, usage) {
             state_key = _.isUndefined(state_key) ? this.current_state_key : state_key;
-            return this.usage + "." + state_key;
+            usage = usage || this.usage;
+            return usage + "." + state_key;
         },
         /*
         Switch state to given one.
@@ -225,8 +226,8 @@ export var ScenarioBaseMixin = {
         _state_get_data: function (state_key) {
             return this.$root.$storage.get(this.storage_key(state_key), {});
         },
-        _state_set_data: function (state_key, v) {
-            this.$root.$storage.set(this.storage_key(state_key), v);
+        _state_set_data: function (state_key, v, usage) {
+            this.$root.$storage.set(this.storage_key(state_key, usage), v);
         },
         state_get_data: function (state_key) {
             state_key = state_key || this.current_state_key;
