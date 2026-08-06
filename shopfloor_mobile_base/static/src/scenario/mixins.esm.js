@@ -408,9 +408,6 @@ export var ScenarioBaseMixin = {
                 );
                 return;
             }
-            // TODO: make reset data optional
-            // When it runs it prevents usage of "back" buttons
-            this.state_reset_data_all();
             this.reset_notification();
             if (result.message) {
                 this.set_message(result.message);
