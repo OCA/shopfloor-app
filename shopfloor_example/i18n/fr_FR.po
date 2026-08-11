@@ -20,6 +20,12 @@ msgid "A Shopfloor application"
 msgstr ""
 
 #. module: shopfloor_example
+#: model:shopfloor.menu,name:shopfloor_example.shopfloor_menu_countries_demo
+#: model:shopfloor.scenario,name:shopfloor_example.shopfloor_scenario_countries_demo
+msgid "Browse countries"
+msgstr ""
+
+#. module: shopfloor_example
 #: model:ir.model.fields,field_description:shopfloor_example.field_shopfloor_app__category
 msgid "Category"
 msgstr ""
