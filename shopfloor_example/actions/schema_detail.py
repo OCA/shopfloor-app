@@ -16,3 +16,13 @@ class ShopfloorSchemaDetailAction(Component):
             }
         )
         return schema
+
+    def country_detail(self):
+        schema = self._simple_record()
+        schema.update(
+            {
+                "code": {"type": "string", "nullable": True, "required": False},
+                "phone_code": {"type": "integer", "nullable": True, "required": False},
+            }
+        )
+        return schema

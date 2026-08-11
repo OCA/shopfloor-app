@@ -9,3 +9,13 @@ class ShopfloorSchemaAction(Component):
 
     def partner(self):
         return self._simple_record()
+
+    def partner_listing(self):
+        schema = self._simple_record()
+        schema.update(
+            {"country": {"type": "string", "nullable": True, "required": False}}
+        )
+        return schema
+
+    def country(self):
+        return self._simple_record()

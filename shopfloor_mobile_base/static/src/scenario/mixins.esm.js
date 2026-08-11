@@ -190,9 +190,10 @@ export var ScenarioBaseMixin = {
             bits.unshift(this.usage);
             return this.make_component_key(bits);
         },
-        storage_key: function (state_key) {
+        storage_key: function (state_key, usage) {
             state_key = _.isUndefined(state_key) ? this.current_state_key : state_key;
-            return this.usage + "." + state_key;
+            usage = usage || this.usage;
+            return usage + "." + state_key;
         },
         /*
         Switch state to given one.
@@ -225,8 +226,8 @@ export var ScenarioBaseMixin = {
         _state_get_data: function (state_key) {
             return this.$root.$storage.get(this.storage_key(state_key), {});
         },
-        _state_set_data: function (state_key, v) {
-            this.$root.$storage.set(this.storage_key(state_key), v);
+        _state_set_data: function (state_key, v, usage) {
+            this.$root.$storage.set(this.storage_key(state_key, usage), v);
         },
         state_get_data: function (state_key) {
             state_key = state_key || this.current_state_key;
@@ -332,6 +333,10 @@ export var ScenarioBaseMixin = {
                 return;
             }
             let state_key = result.next_state;
+            if (state_key == "jump_to_menu") {
+                this._on_call_success_jump_to_menu(result);
+                return;
+            }
             // TODO: potentially we can return values for other states as well.
             // We should loop on result.data keys.
             const state_data = result.data[state_key];
@@ -360,6 +365,74 @@ export var ScenarioBaseMixin = {
             // Make sure the counters and all the data from the navigation drawer menu
             // is up to date after new data from the backend is received.
             event_hub.$emit("menu_drawer:update");
+        },
+        /*
+        Special state, common to all scenarios: hand off to another
+        scenario's menu.
+
+        `result.data.jump_to_menu` is a plain object matching this shape:
+
+            {
+                "menu_id": 1,              // target menu item id
+                "next_state": "state_key", // state to load in the target scenario
+                "states_data": "{}"        // optional; JSON-encoded
+                                           // {state_key: data} map to seed
+                                           // in the target scenario
+            }
+
+        `states_data` is JSON-encoded (as opposed to the whole object): its
+        shape varies per target scenario/state, so it stays opaque here and
+        no per-scenario schema change is required to carry it. `menu_id`
+        and `next_state` are plain, validated fields.
+
+        `states_data` maps state keys to data, not just data for the
+        landing state (`next_state`): a scenario's state can need data that
+        was computed or stored on a different state of the same scenario,
+        so landing directly on a state without also seeding the other
+        states it depends on would leave that data missing. Include an
+        entry for `next_state` itself in the map too, if it needs data.
+
+        We store the deserialized data under the target scenario/state
+        storage keys and route straight to its menu link; the target
+        scenario validates its own startup data when it loads.
+        */
+        _on_call_success_jump_to_menu: function (result) {
+            const jump_data = result.data.jump_to_menu;
+            const item = _.find(this.$root.getNav().app_nav, {
+                id: jump_data.menu_id,
+            });
+            if (_.isUndefined(item)) {
+                console.error(
+                    "jump_to_menu: no menu item found for id",
+                    jump_data.menu_id
+                );
+                return;
+            }
+            this.reset_notification();
+            if (result.message) {
+                this.set_message(result.message);
+            }
+            if (jump_data.states_data) {
+                let states_data = null;
+                try {
+                    states_data = JSON.parse(jump_data.states_data);
+                } catch {
+                    // Just a safe guard: JSON will be validated server side too
+                    console.error(
+                        "jump_to_menu: malformed JSON in states_data",
+                        jump_data.states_data
+                    );
+                }
+                if (states_data) {
+                    _.each(states_data, (data, state_key) => {
+                        this._state_set_data(state_key, data, item.scenario);
+                    });
+                }
+            }
+            this.$router.push({
+                name: item.scenario,
+                params: {menu_id: item.id, state: jump_data.next_state},
+            });
         },
         on_call_error: function (result) {
             alert(result.status + " " + result.error);

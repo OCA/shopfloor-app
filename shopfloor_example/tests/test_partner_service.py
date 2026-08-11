@@ -59,7 +59,9 @@ class TestCustomServiceCase(CommonCase):
         self.assertEqual(
             res,
             {
-                "data": {"listing": {"records": self.data.partners(all_records)}},
+                "data": {
+                    "listing": {"records": self.data.partner_listing(all_records)}
+                },
                 "next_state": "listing",
             },
         )

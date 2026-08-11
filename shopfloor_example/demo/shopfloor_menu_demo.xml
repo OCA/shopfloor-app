@@ -5,4 +5,10 @@
         <field name="profile_id" ref="shopfloor_profile_partner_manager_demo" />
         <field name="scenario_id" ref="shopfloor_scenario_partners_demo" />
     </record>
+    <record id="shopfloor_menu_countries_demo" model="shopfloor.menu">
+        <field name="name">Browse countries</field>
+        <field name="sequence">30</field>
+        <field name="profile_id" ref="shopfloor_profile_partner_manager_demo" />
+        <field name="scenario_id" ref="shopfloor_scenario_countries_demo" />
+    </record>
 </odoo>

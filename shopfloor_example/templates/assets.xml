@@ -29,6 +29,16 @@
                 t-attf-src="/#{mod_name}/static/src/scenario/partner.esm.js?v=#{get_version(mod_name)}"
                 type="module"
             />
+            <script
+                id="script_detail_country"
+                t-attf-src="/#{mod_name}/static/src/components/detail/detail_country.esm.js?v=#{get_version(mod_name)}"
+                type="module"
+            />
+            <script
+                id="script_scenario_country"
+                t-attf-src="/#{mod_name}/static/src/scenario/country.esm.js?v=#{get_version(mod_name)}"
+                type="module"
+            />
         </t>
     </template>
     <template
