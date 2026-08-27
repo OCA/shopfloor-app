@@ -129,6 +129,23 @@ class BaseShopfloorService(AbstractComponent):
 
         return response
 
+    def _response_for_jump_to_menu(self, menu, message=None):
+        with self.collection.work_on(model_name="rest.service.registration") as work:
+            service = work.component(usage=menu.scenario_id.key)
+            service.work.menu = menu
+        jump_to_data = service._get_data_for_jump_to_menu()
+        jump_to_state = jump_to_data["next_state"]
+        states_data = {jump_to_state: jump_to_data["data"][jump_to_state]}
+        data = {
+            "next_state": jump_to_state,
+            "menu_id": menu.id,
+            "states_data": states_data,
+        }
+        return self._response(
+            next_state="jump_to_menu",
+            data=data,
+        )
+
     _requires_header_menu = False
     _requires_header_profile = False
 
