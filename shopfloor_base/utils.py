@@ -3,6 +3,7 @@
 # @author Simone Orsi <simahawk@gmail.com>
 import logging
 import os
+import warnings
 from functools import wraps
 
 from odoo.modules.module import get_manifest
@@ -76,6 +77,9 @@ RUNNING_ENV = _get_running_env()
 def register_new_services(env, *component_classes, apps=None):
     """Enforce registration of new services straight from their classes.
 
+    DEPRECATED: not needed anymore. Service routes are generated
+    when the routing map is built: new services are routed w/o any action.
+
     At some stage (eg: a post install hook) the component registry
     might not be fully loaded and the components might be not fully "ready".
     For this reason, not all the inherited properties
@@ -92,6 +96,11 @@ def register_new_services(env, *component_classes, apps=None):
     Please, note that this func is very low level
     and must be used only in particular situations (such as install hooks).
     """
+    warnings.warn(
+        "register_new_services() is deprecated: service routes are generated.",
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
     if odoo_config["test_enable"]:
         # When installing modules for tests, there's nothing to do.
         # Moreover, it can lead to weird service behavior
@@ -109,6 +118,9 @@ def register_new_services(env, *component_classes, apps=None):
 
 def force_register_controllers(env, apps=None):
     """Force re-registration of all services endpoints for all apps.
+
+    Not needed anymore for new services (routes are generated),
+    still useful to re-sync the anchor routes of the apps.
 
     Useful when the component registry is not fully ready
     at module install time and some services are missing their routes.
@@ -132,6 +144,10 @@ def load_components_without_registry(env, *component_classes):
 def purge_endpoints(env, service_usage, endpoint=None):
     """Remove stale services' endpoints routes.
 
+    DEPRECATED: not needed anymore. Service routes are not stored
+    (only one anchor route per app is): removed services are not routed anymore.
+    Kept to clean up legacy routes.
+
     When scenario are removed (eg: module uninstalled)
     their routes must be cleaned up.
     You can use this function to easily clean them for all apps.
@@ -142,6 +158,12 @@ def purge_endpoints(env, service_usage, endpoint=None):
     when a component is removed there's no direct update to the table.
     Hence, is the responsibility of the dev to take care of the cleanup.
     """
+    warnings.warn(
+        "purge_endpoints() is deprecated: service routes are not stored anymore.",
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
+    env.flush_all()
     apps = env["shopfloor.app"].search([])
     for app in apps:
         route = app.api_url_for_service(service_usage, endpoint=endpoint)

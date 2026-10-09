@@ -50,40 +50,39 @@ class TestShopfloorApp(CommonCase):
         self.assertRecordValues(self.records, expected)
 
     def _test_registered_routes(self, rec):
-        # On class setup the registry is not ready thus endpoints are not registered yet
         rec._register_controllers(init=True)
-        routes = rec._registered_routes()
+        # Only one anchor rule is stored per app
+        rules = list(rec._registered_routes())
+        self.assertEqual(len(rules), 1)
+        rule = rules[0]
+        self.assertEqual(rule.key, f"shopfloor.app:{rec.id}")
+        self.assertEqual(rule.route, rec.api_route)
+        self.assertEqual(rule.route_group, rec._route_group())
+        self.assertTrue(rule.endpoint_hash)
+        self.assertEqual(
+            rule.options["generator"],
+            {
+                "model": "shopfloor.app",
+                "res_id": rec.id,
+                "method_name": "_generate_routes",
+            },
+        )
+        # Service routes are generated
         _check = {}
-        for rule in routes:
-            self.assertEqual(rule.routing["type"], "restapi")
-            self.assertEqual(rule.route_group, rec._route_group())
-            self.assertTrue(rule.endpoint_hash)
-            service, endpoint = rule.route.split("/")[-2:]
-            expected_handler_opts = {
-                "default_pargs": [rec.id, service, endpoint],
-                "klass_dotted_path": (
-                    "odoo.addons.shopfloor_base.controllers.main.ShopfloorController"
-                ),
-                "method_name": "_process_endpoint",
-            }
-            for k, v in expected_handler_opts.items():
-                self.assertEqual(
-                    rule.handler_options[k],
-                    v,
-                    f"{k} differs: {rule.handler_options[k]} != {v}",
-                )
-            _check[rule.route] = set(rule.routing["methods"])
+        for url, endpoint in rule.iter_routing_rules(self.env):
+            self.assertEqual(endpoint.routing["type"], "restapi")
+            self.assertEqual(endpoint.routing["auth"], rec.auth_type)
+            self.assertEqual(endpoint.routing["routes"], [url])
+            self.assertEqual(endpoint.func.__name__, "_process_endpoint")
+            service, method_name = url.split("/")[-2:]
+            self.assertEqual(endpoint.args, (rec.id, service, method_name))
+            _check[url] = set(endpoint.routing["methods"])
         expected = {
-            # TODO: review methods
             f"/shopfloor/api/{rec.tech_name}/app/user_config": {"POST"},
             f"/shopfloor/api/{rec.tech_name}/user/menu": {"POST"},
             f"/shopfloor/api/{rec.tech_name}/user/user_info": {"POST"},
-            f"/shopfloor/api/{rec.tech_name}/menu/search": {
-                "GET",
-            },
-            f"/shopfloor/api/{rec.tech_name}/profile/search": {
-                "GET",
-            },
+            f"/shopfloor/api/{rec.tech_name}/menu/search": {"GET"},
+            f"/shopfloor/api/{rec.tech_name}/profile/search": {"GET"},
             f"/shopfloor/api/{rec.tech_name}/scan_anything/scan": {"POST"},
         }
         for route, method in expected.items():
@@ -103,7 +102,85 @@ class TestShopfloorApp(CommonCase):
         rec1, rec2 = self.records
         self._test_registered_routes(rec1)
         self._test_registered_routes(rec2)
-        # TODO: test after routing_map cleaned
+
+    def test_reset_endpoint_routes(self):
+        registry = self.records._endpoint_registry
+        handler = {
+            "klass_dotted_path": (
+                "odoo.addons.shopfloor_base.controllers.main.ShopfloorController"
+            ),
+            "method_name": "_process_endpoint",
+        }
+        other_handler = {
+            "klass_dotted_path": (
+                "odoo.addons.endpoint_route_handler.controllers.main."
+                "EndpointNotFoundController"
+            ),
+            "method_name": "auto_not_found",
+        }
+
+        def _rule(key, group, opts_handler):
+            route = f"/test_reset/{key}"
+            return registry.make_rule(
+                key,
+                route,
+                {"handler": opts_handler},
+                {"routes": [route], "methods": ["POST"]},
+                f"hash-{key}",
+                route_group=group,
+            )
+
+        registry.update_rules(
+            [
+                # legacy route of an existing app
+                _rule("legacy", self.records[0]._route_group(), handler),
+                # route of an app deleted or renamed
+                _rule("orphan", "shopfloor.app:gone", handler),
+                # shopfloor handler in another group
+                _rule("other_group", "something", handler),
+                # not related to shopfloor
+                _rule("unrelated", "something", other_handler),
+            ]
+        )
+        self.records[1].sudo().active = False
+        self.env["shopfloor.app"].sudo()._reset_endpoint_routes()
+        keys = {
+            r.key for r in registry.get_rules(keys=("legacy", "orphan", "other_group"))
+        }
+        self.assertFalse(keys)
+        self.assertTrue(list(registry.get_rules(keys=("unrelated",))))
+        # One anchor per active app
+        anchors = list(self.records[0]._registered_routes())
+        self.assertEqual(
+            [r.key for r in anchors], [f"shopfloor.app:{self.records[0].id}"]
+        )
+        self.assertFalse(list(self.records[1]._registered_routes()))
+
+    def test_unregister_legacy_rules(self):
+        rec = self.records[0]
+        rec._register_controllers(init=True)
+        # Simulate a legacy rule (one per endpoint) left in the table
+        registry = rec._endpoint_registry
+        legacy = registry.make_rule(
+            "legacy",
+            f"{rec.api_route}/app/user_config",
+            {
+                "handler": {
+                    "klass_dotted_path": (
+                        "odoo.addons.shopfloor_base.controllers.main."
+                        "ShopfloorController"
+                    ),
+                    "method_name": "_process_endpoint",
+                }
+            },
+            {"routes": [f"{rec.api_route}/app/user_config"], "methods": ["POST"]},
+            "legacy-hash",
+            route_group=rec._route_group(),
+        )
+        registry.update_rules([legacy])
+        self.assertEqual(len(list(rec._registered_routes())), 2)
+        rec._unregister_controllers()
+        self.assertFalse(list(rec._registered_routes()))
 
     def test_api_url_for_service(self):
         app = self.shopfloor_app
