@@ -76,6 +76,9 @@ RUNNING_ENV = _get_running_env()
 def register_new_services(env, *component_classes, apps=None):
     """Enforce registration of new services straight from their classes.
 
+    DEPRECATED: not needed anymore. Service routes are generated
+    when the routing map is built: new services are routed w/o any action.
+
     At some stage (eg: a post install hook) the component registry
     might not be fully loaded and the components might be not fully "ready".
     For this reason, not all the inherited properties
@@ -110,6 +113,9 @@ def register_new_services(env, *component_classes, apps=None):
 def force_register_controllers(env, apps=None):
     """Force re-registration of all services endpoints for all apps.
 
+    Not needed anymore for new services (routes are generated),
+    still useful to re-sync the anchor routes of the apps.
+
     Useful when the component registry is not fully ready
     at module install time and some services are missing their routes.
     """
@@ -131,6 +137,10 @@ def load_components_without_registry(env, *component_classes):
 
 def purge_endpoints(env, service_usage, endpoint=None):
     """Remove stale services' endpoints routes.
+
+    DEPRECATED: not needed anymore. Service routes are not stored
+    (only one anchor route per app is): removed services are not routed anymore.
+    Kept to clean up legacy routes.
 
     When scenario are removed (eg: module uninstalled)
     their routes must be cleaned up.
