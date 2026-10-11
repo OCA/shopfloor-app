@@ -168,11 +168,27 @@ class ShopfloorApp(models.Model):
 
     def _register_hook(self):
         super()._register_hook()
-        if not tools.sql.column_exists(self.env.cr, self._table, "registry_sync"):
-            # `registry_sync` has been introduced recently.
-            # If an env is loaded before the column gets created this can be broken.
+        missing_columns = self._get_missing_columns()
+        if missing_columns:
+            # New code loaded before the database is updated (eg: a module
+            # adds a field, the registry is loaded w/o `-u`): reading apps
+            # would fail. Routes are booted on the next load, after update.
+            _logger.warning(
+                "Shopfloor apps REST routes not booted, missing columns: %s. "
+                "Update the modules.",
+                ", ".join(missing_columns),
+            )
             return True
         self._boot_base_rest_endpoints()
+
+    def _get_missing_columns(self):
+        """Return the stored fields of the model missing in the database."""
+        columns = tools.sql.table_columns(self.env.cr, self._table)
+        return [
+            name
+            for name, field in self._fields.items()
+            if field.store and field.column_type and name not in columns
+        ]
 
     def _boot_base_rest_endpoints(self):
         """Satisfy `base_rest` requirements for REST requests.
