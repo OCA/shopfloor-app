@@ -7,8 +7,6 @@ import struct
 import time
 from functools import partial
 
-from odoo.tools import str2bool
-
 from odoo.addons.component.core import Component
 
 _logger = logging.getLogger(__name__)
@@ -44,51 +42,41 @@ class LockAction(Component):
         not wait for the row to be available but return False if the lock could not
         be obtained.
 
+        The lock mode is 'FOR NO KEY UPDATE', as used by Odoo core in similar
+        situations. It avoids blocking concurrent inserts referencing the locked rows
+        through a foreign key.
         """
-        no_key = str2bool(
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("shopfloor.lock.for_update.no_key")
-        )
-        no_wait = str2bool(
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("shopfloor.lock.for_update.no_wait")
-        )
-
-        for_update_str = " FOR NO KEY UPDATE " if no_key else " FOR UPDATE "
-        query = "SELECT id FROM %s WHERE ID IN %%s " + for_update_str
-
-        suffix = ""
+        query = "SELECT id FROM %s WHERE ID IN %%s FOR NO KEY UPDATE"
         if skip_locked:
-            suffix = " SKIP LOCKED"
-        elif no_wait:
-            suffix = " NOWAIT"
-        query += suffix
-
+            query += " SKIP LOCKED"
         sql = query % records._table
 
-        with_suffix_str = f" with suffix{suffix}" if suffix else ""
-        _logger.debug(
-            f"Trying to acquire {for_update_str} lock{with_suffix_str} on "
-            f"{records._table} for IDs {sorted(records.ids)}"
-        )
-
-        start_time = time.perf_counter()
+        if _logger.isEnabledFor(logging.DEBUG):
+            _logger.debug(
+                "Trying to acquire lock on %s for IDs %s%s",
+                records._table,
+                sorted(records.ids),
+                " with SKIP LOCKED" if skip_locked else "",
+            )
+            start_time = time.perf_counter()
 
         self.env.cr.execute(sql, (tuple(records.ids),), log_exceptions=log_exceptions)
 
-        end_time = time.perf_counter()
-        execute_time = end_time - start_time
-
         rows = self.env.cr.fetchall()
-        _logger.debug(
-            f"Lock was acquired on {records._table} for IDs "
-            f"{sorted([row[0] for row in rows])} in {execute_time:0.4f} seconds"
-        )
 
-        self.env.cr.postcommit.add(partial(self._log_lock_release, records))
-        self.env.cr.postrollback.add(partial(self._log_lock_release, records))
+        if _logger.isEnabledFor(logging.DEBUG):
+            _logger.debug(
+                "Lock was acquired on %s for IDs %s in %.4f seconds",
+                records._table,
+                sorted(row[0] for row in rows),
+                time.perf_counter() - start_time,
+            )
+            # NOTE: if the lock was acquired inside a savepoint that is later
+            # rolled back, PostgreSQL releases it right away, while the
+            # "released" log below is emitted only on full transaction
+            # rollback or commit. The log can therefore be late or missing.
+            self.env.cr.postcommit.add(partial(self._log_lock_release, records))
+            self.env.cr.postrollback.add(partial(self._log_lock_release, records))
 
         if skip_locked:
             return len(rows) == len(records)
@@ -96,5 +84,7 @@ class LockAction(Component):
 
     def _log_lock_release(self, records):
         _logger.debug(
-            f"Lock was released on {records._table} for IDs {sorted(records.ids)}"
+            "Lock was released on %s for IDs %s",
+            records._table,
+            sorted(records.ids),
         )
