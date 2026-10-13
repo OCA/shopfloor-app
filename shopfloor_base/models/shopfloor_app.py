@@ -2,6 +2,8 @@
 # @author Simone Orsi <simahawk@gmail.com>
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
+import hashlib
+import json
 import logging
 
 from odoo import api, fields, models, tools
@@ -9,7 +11,9 @@ from odoo.tools import DotDict
 
 from odoo.addons.base_rest.tools import ROUTING_DECORATOR_ATTR, _inspect_methods
 from odoo.addons.component.core import _component_databases
+from odoo.addons.endpoint_route_handler.utils import make_endpoint
 
+from ..controllers.main import ShopfloorController
 from ..utils import APP_VERSION, RUNNING_ENV
 
 _logger = logging.getLogger(__file__)
@@ -94,12 +98,11 @@ class ShopfloorApp(models.Model):
     @api.depends("tech_name")
     def _compute_registered_routes(self):
         for rec in self:
-            routes = sorted(rec._registered_routes(), key=lambda x: x.route)
-            vals = []
-            for endpoint_rule in routes:
-                methods = ", ".join(endpoint_rule.routing["methods"])
-                vals.append(f"{endpoint_rule.route} ({methods})")
-            rec.registered_routes = "\n".join(vals)
+            vals = [
+                f"{url} ({', '.join(endpoint.routing['methods'])})"
+                for url, endpoint in rec._generate_routes()
+            ]
+            rec.registered_routes = "\n".join(sorted(vals))
 
     @api.depends("profile_ids")
     def _compute_profile_required(self):
@@ -148,23 +151,99 @@ class ShopfloorApp(models.Model):
         return ("tech_name", "auth_type")
 
     def _prepare_endpoint_rules(self, options=None):
-        # `endpoint.route.sync.mixin` api
-        services = self._get_services()
-        routes = []
-        for service in services:
-            self._prepare_non_decorated_endpoints(service)
-            routes.extend(self._generate_endpoints(service))
+        """Register one anchor rule per app (`endpoint.route.sync.mixin` api).
 
-        rules = [
-            rec._make_controller_rule(key=rec.name, options=options)
-            for rec, options in routes
-        ]
-        return rules
+        Routes of the services are not stored:
+        they are generated when the routing map is built (see `_generate_routes`),
+        hence new endpoints do not require any update of the `endpoint_route` table.
+        """
+        return [rec._make_anchor_rule() for rec in self]
 
     def _registered_endpoint_rule_keys(self):
-        # `endpoint.route.sync.mixin` api
-        # TODO: add tests
+        """Keys of all the rules of the app (`endpoint.route.sync.mixin` api).
+
+        Includes legacy rules (one per endpoint) to clean them up.
+        """
         return [x.key for x in self._registered_routes()]
+
+    @api.model
+    def _reset_endpoint_routes(self):
+        """Drop all the shopfloor routes stored and register the anchor routes.
+
+        Catch all the routes related to shopfloor, including legacy ones
+        (one per endpoint) and the ones of apps deleted or renamed:
+        any route of a `shopfloor.app:*` group or handled by `ShopfloorController`.
+        Then register one anchor route per active app.
+
+        :return: number of deleted routes
+        """
+        self.env.cr.execute(
+            "DELETE FROM endpoint_route WHERE route_group LIKE %s OR opts LIKE %s",
+            (f"{self._name}:%", "%ShopfloorController%"),
+        )
+        deleted = self.env.cr.rowcount
+        self.search([])._register_controllers(clear_cache=False)
+        self.env.registry.clear_cache("routing")
+        return deleted
+
+    def _anchor_rule_key(self):
+        """Unique key of the anchor rule of the app."""
+        return f"{self._name}:{self.id}"
+
+    def _anchor_rule_options(self):
+        """Delegate the routes of the app to `_generate_routes`."""
+        return {
+            "generator": {
+                "model": self._name,
+                "res_id": self.id,
+                "method_name": "_generate_routes",
+            }
+        }
+
+    def _base_routing(self):
+        """Routing shared by all the endpoints of the app."""
+        return {
+            # SF endpoints use the `restapi` dispatcher provided by base_rest
+            "type": "restapi",
+            "auth": self.auth_type,
+            "csrf": False,
+            "readonly": False,
+        }
+
+    def _make_anchor_rule(self):
+        """Build the anchor rule: the only row stored for the app."""
+        options = self._anchor_rule_options()
+        routing = dict(self._base_routing(), routes=[self.api_route], methods=None)
+        # The hash identifies the rule:
+        # it changes when routing data change, to refresh the routing map.
+        endpoint_hash = hashlib.md5(
+            json.dumps([self.api_route, options, routing], sort_keys=True).encode(),
+            usedforsecurity=False,
+        ).hexdigest()
+        return self._endpoint_registry.make_rule(
+            self._anchor_rule_key(),
+            self.api_route,
+            options,
+            routing,
+            endpoint_hash,
+            route_group=self._route_group(),
+        )
+
+    def _generate_routes(self, rule=None):
+        """Yield `(url, endpoint)` for all the endpoints of the app's services.
+
+        Called by `endpoint_route_handler` when the routing map is built.
+        """
+        self.ensure_one()
+        if not self._is_component_registry_ready():
+            # Routes would be missing until the routing map is rebuilt.
+            _logger.error(
+                "Component registry not ready: routes of %s not generated",
+                self.tech_name,
+            )
+            return
+        for service in self._get_services():
+            yield from self._generate_service_routes(service)
 
     def _register_hook(self):
         super()._register_hook()
@@ -214,77 +293,32 @@ class ShopfloorApp(models.Model):
         # Autogenerate routing info where missing
         self.env["rest.service.registration"]._prepare_non_decorated_endpoints(service)
 
-    def _generate_endpoints(self, service):
-        res = []
-        for rec in self:
-            values = rec._generate_endpoints_values(service)
-            for vals in values:
-                route, options = rec._generate_endpoints_route(service, vals)
-                res.append((route, options))
-        return res
-
-    def _generate_endpoints_values(self, service):
-        values = []
+    def _generate_service_routes(self, service):
+        """Yield `(url, endpoint)` for the decorated methods of the service."""
+        self._prepare_non_decorated_endpoints(service)
         root_path = self.api_route.rstrip("/") + "/" + service._usage
+        controller = ShopfloorController()
         for name, method in _inspect_methods(service.__class__):
             routing = getattr(method, ROUTING_DECORATOR_ATTR, None)
             if routing is None:
                 continue
-            for routes, http_method in routing["routes"]:
-                # TODO: why on base_rest we have this instead of pure method name?
-                # method_name = "{}_{}".format(http_method.lower(), name)
-                method_name = name
-                default_route = root_path + "/" + routes[0].lstrip("/")
-                route_params = dict(
-                    route=[f"{root_path}{r}" for r in routes],
-                    methods=[http_method],
+            for paths, http_method in routing["routes"]:
+                # Only the 1st path is routed (as it has always been).
+                url = root_path + "/" + paths[0].lstrip("/")
+                endpoint = make_endpoint(
+                    controller._process_endpoint,
+                    self._service_endpoint_routing(url, http_method, routing),
+                    pargs=(self.id, service._usage, name),
                 )
-                # TODO: get this params from self?
-                for attr in {"auth", "cors", "csrf", "save_session"}:
-                    if attr in routing:
-                        route_params[attr] = routing[attr]
-                # {'route': ['/foo/testing/app/user_config'], 'methods': ['POST']}
-                values.append(
-                    self._prepare_endpoint_vals(
-                        service, method_name, default_route, route_params
-                    )
-                )
-        return values
+                yield url, endpoint
 
-    def _generate_endpoints_route(self, service, vals):
-        method_name = vals.pop("_method_name")
-        route_handler = self.env["endpoint.route.handler.tool"]
-        new_route = route_handler.new(vals)
-        # SF endpoints must use the ``restapi`` dispatcher provided by base_rest.
-        # NOTE: this ``route_type`` value
-        # is not declared on `endpoint.route.handler.route_type` field selection,
-        # but is not relevant in this case
-        # because the value is set only on a in memory recordset.
-        new_route.route_type = "restapi"
-        new_route._refresh_endpoint_data()
-        options = {
-            "handler": {
-                "klass_dotted_path": (
-                    "odoo.addons.shopfloor_base.controllers.main.ShopfloorController"
-                ),
-                "method_name": "_process_endpoint",
-                "default_pargs": (self.id, service._usage, method_name),
-            }
-        }
-        return new_route, options
-
-    def _prepare_endpoint_vals(self, service, method_name, route, routing_params):
-        request_method = routing_params["methods"][0]
-        name = f"app#{self.id}::{service._name}/{method_name}__{request_method.lower()}"
-        endpoint_vals = dict(
-            name=name,
-            request_method=request_method,
-            route=route,
-            route_group=self._route_group(),
-            auth_type=self.auth_type,
-            _method_name=method_name,
-        )
-        return endpoint_vals
+    def _service_endpoint_routing(self, url, http_method, method_routing):
+        """Routing of one endpoint: app defaults + method overrides."""
+        routing = dict(self._base_routing(), routes=[url], methods=[http_method])
+        for attr in ("auth", "cors", "csrf", "save_session"):
+            if attr in method_routing:
+                routing[attr] = method_routing[attr]
+        return routing
 
     def _route_group(self):
         return f"{self._name}:{self.tech_name}"
