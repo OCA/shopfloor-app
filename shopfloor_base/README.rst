@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ==============
 Shopfloor Base
 ==============
@@ -17,7 +13,7 @@ Shopfloor Base
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-LGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-LGPL--3-blue.png
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fshopfloor--app-lightgray.png?logo=github
@@ -94,6 +90,22 @@ Curl example:
 ::
 
    curl -X POST "http://localhost:8069/shopfloor/user/menu" -H  "accept: */*" -H  "Content-Type: application/json" -H "API-KEY: 72B044F7AC780DAC"
+
+Routes
+------
+
+Each app stores only one route (its ``api_route``) in the
+``endpoint_route`` table. The routes of the services are generated when
+the routing map is built (see the generators of
+``endpoint_route_handler``):
+``/shopfloor/api/<app tech name>/<service usage>/<endpoint>``.
+
+New services and endpoints are routed as soon as the code is loaded
+(restart or module install/update): no install hook nor migration is
+needed to register them. Same for removed ones.
+
+To customize the routes of an app, extend
+``shopfloor.app._generate_routes`` or ``_generate_service_routes``.
 
 Known issues / Roadmap
 ======================
